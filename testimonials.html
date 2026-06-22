@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Client Stories | Gift Homeowner Support</title>
+  <meta name="description" content="Read stories from homeowners in Oʻahu who found relief and options with Gift's help. Real people, real solutions." />
+
+  <style>
+    :root{
+      --bg:#f4fbff;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --accent:#1e40af;
+      --accent2:#2563eb;
+      --accent-warm:#f59e0b;
+      --border:rgba(15,23,42,.12);
+      --shadow: 0 10px 24px rgba(15,23,42,.14);
+      --radius: 18px;
+      --max: 1120px;
+      --mono: ui-monospace, monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans);
+      background: var(--bg); color:var(--text); line-height:1.65;
+      padding-bottom: 80px; 
+    }
+    a{color:var(--accent); text-underline-offset:3px}
+    a:hover{color:var(--accent2)}
+    .wrap{max-width:var(--max); margin:0 auto; padding:34px 18px 90px; background:rgba(245,249,255,.72);}
+
+    header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px; position:sticky; top:0; z-index:20;
+      padding:14px 18px; margin:0 -18px;
+      background: rgba(245,249,255,.92); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand{display:flex; gap:12px; align-items:center; text-decoration:none;}
+    .avatar{
+      width:42px; height:42px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(30,64,175,.95), rgba(37,99,235,.85));
+      box-shadow: var(--shadow); display:grid; place-items:center;
+      font-weight:900; color:white;
+    }
+    nav{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+    nav a{ text-decoration:none; font-size:14px; color:#1f2933; padding:8px 10px; border-radius:12px; }
+    nav a:hover{background:rgba(37,99,235,.10); color:var(--accent)}
+    /* Highlight the current page link */
+    nav a.active{background:rgba(37,99,235,.10); color:var(--accent); font-weight:bold;}
+
+    .card{
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow); padding:24px;
+      margin-bottom: 24px;
+    }
+    h1{margin:10px 0 20px; font-size:36px; font-weight:800; line-height:1.1;}
+    h2{font-size:22px; margin-bottom:10px;}
+    .kicker{color:var(--accent); font-size:13px; letter-spacing:.08em; text-transform:uppercase;}
+    .quote-icon{font-size: 40px; color: var(--accent-warm); line-height: 1; margin-bottom: 10px; opacity: 0.5;}
+    
+    .story-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+    
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 14px; border-radius:14px; border:1px solid var(--border);
+      background: rgba(255,255,255,.55); text-decoration:none; font-weight:800;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(30,64,175,.95), rgba(37,99,235,.85));
+      border-color: rgba(30,64,175,.45); color:white;
+    }
+
+    /* Sticky Footer for Mobile */
+    .sticky-footer {
+      position: fixed; left: 0; bottom: 0; width: 100%;
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border); padding: 12px; z-index: 100;
+      display: flex; justify-content: center;
+    }
+    .sticky-btn {
+      background-color: #dc2626; color: white; padding: 12px 24px;
+      text-decoration: none; font-weight: 800; border-radius: 50px;
+      font-size: 1.1rem; display: flex; align-items: center; gap: 8px;
+    }
+    @media (min-width: 768px) { .sticky-footer { display: none; } }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="index.html">
+        <div class="avatar">G</div>
+        <div>
+          <div style="font-weight:800">Sakawrat “Gift” Kitkuakul</div>
+          <div style="font-size:13px; color:var(--muted)">Homeowner Advocate</div>
+        </div>
+      </a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#services">Help</a>
+        <a href="testimonials.html" class="active">Stories</a>
+        <a href="blog.html">Blog</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="card" style="margin-top:20px; text-align:center; padding: 40px 20px;">
+        <div class="kicker">Real Stories</div>
+        <h1>Homeowners we have helped</h1>
+        <p style="max-width: 600px; margin: 0 auto; color: var(--muted);">
+          Every situation is different. Whether you need to sell, negotiate, or just understand your rights, you are not alone.
+        </p>
+      </div>
+
+      <div class="story-grid">
+        
+        <div class="card">
+          <div class="quote-icon">❝</div>
+          <p>“I was ignoring the mail because I was so scared. Gift sat down with me, opened the envelopes, and explained what they meant in plain English. We found a way to pause the auction and I had time to breathe again.”</p>
+          <div style="margin-top:15px; font-weight:bold; font-size:14px;">— Local Homeowner</div>
+          <div style="font-size:13px; color:var(--muted);">Waipahu, HI</div>
+        </div>
+
+        <div class="card">
+          <div class="quote-icon">❝</div>
+          <p>“Other people were trying to pressure me to sell my house for cheap. Gift was the only one who told me I had other options. I ended up selling, but on MY terms and for a fair price.”</p>
+          <div style="margin-top:15px; font-weight:bold; font-size:14px;">— Inherited Property Owner</div>
+          <div style="font-size:13px; color:var(--muted);">Honolulu, HI</div>
+        </div>
+
+        <div class="card">
+          <div class="quote-icon">❝</div>
+          <p>“The process was confusing and I thought I was going to lose everything. Gift connected me to a legal professional and stayed with me through the whole process. Thank you.”</p>
+          <div style="margin-top:15px; font-weight:bold; font-size:14px;">— Client</div>
+          <div style="font-size:13px; color:var(--muted);">Ewa Beach, HI</div>
+        </div>
+
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, rgba(37,99,235,.08), rgba(245,158,11,.10)); text-align:center;">
+        <h2>Ready to find your own solution?</h2>
+        <p>It costs nothing to talk. Let's look at your options together.</p>
+        <br>
+        <a class="btn primary" href="index.html#contact">Contact Gift Today</a>
+      </div>
+
+    </main>
+    
+    <div style="text-align:center; color:var(--muted); font-size:13px; margin-top:40px;">
+      <a href="index.html">Back to Home</a>
+    </div>
+
+  </div>
+
+  <div class="sticky-footer">
+    <a href="tel:+18082155828" class="sticky-btn">
+      <span>📞</span> Call Gift: (808) 215-5828
+    </a>
+  </div>
+</body>
+</html>
