@@ -261,6 +261,7 @@
         <a href="#process">Process</a>
         <a href="testimonials.html">Stories</a>
         <a href="blog.html">Blog</a>
+        <a href="resources.html">Resources</a>
         <a href="#faq">FAQ</a>
         <a href="#contact">Contact</a>
         <a href="#legal">Legal</a>
@@ -587,6 +588,82 @@
 
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "name": "Gift Homeowner Support",
+        "description": "Free homeowner education and advocacy for Oʻahu homeowners facing foreclosure, probate, tax liens, or HOA liens. No fees, no pressure — just information.",
+        "url": "https://www.gifthomeownersupport.com",
+        "telephone": "+18082155828",
+        "email": "gift.saveyourhomes@gmail.com",
+        "areaServed": {
+          "@type": "Place",
+          "name": "Oʻahu, Hawaii"
+        },
+        "priceRange": "Free",
+        "founder": {
+          "@type": "Person",
+          "name": "Sakawrat Kitkuakul",
+          "alternateName": "Gift Kitkuakul",
+          "honorificSuffix": "Ph.D.",
+          "jobTitle": "Homeowner Advocate & Educator"
+        },
+        "sameAs": [
+          "https://www.gifthomeownersupport.com"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is your help really free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. My homeowner support and resource connections are 100% free for homeowners. There's no obligation and no pressure to sell."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I have to sell my home?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Understanding your options comes first — keeping the home, pausing foreclosure, negotiating, or selling only if you choose. No one should make that decision without knowing all the alternatives."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What should I bring on the first call?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "If you have them: any foreclosure notice, loan servicer or lender name, court case info, auction date, HOA or tax letters, and your best contact details. If you don't have documents, that's okay — we'll start with what you know."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are you a lawyer or HUD counselor?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. I'm a homeowner advocate. I share general information to help you understand your situation and options. I don't provide legal or tax advice. When those services are needed, I connect you with trusted, verified professionals."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "If there's an urgent deadline, what should I do?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Text or call (808) 215-5828 as soon as possible so we can confirm dates and identify the fastest next steps. If you're in immediate danger of losing housing, contact a HUD-approved counselor or Legal Aid right away."
+            }
+          }
+        ]
+      }
+    ]
+  }
   </script>
 </body>
 </html>
