@@ -266,6 +266,85 @@
     .receipt-yes { color: var(--success); font-size: .8rem; }
     .receipt-no  { color: var(--border);  font-size: .8rem; }
 
+    /* ── Photo upload ── */
+    .photo-drop {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      background: #fafbfc;
+      position: relative;
+    }
+    .photo-drop:hover, .photo-drop.drag-over { border-color: var(--primary); background: #eff6ff; }
+    .photo-drop input[type="file"] { display: none; }
+    .photo-drop-label { font-size: .85rem; color: var(--muted); pointer-events: none; }
+    .photo-drop-label strong { color: var(--primary); }
+
+    .photo-preview-wrap { margin-top: 12px; position: relative; display: inline-block; }
+    .photo-preview-wrap img {
+      max-width: 100%; max-height: 220px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .photo-remove-btn {
+      position: absolute; top: -8px; right: -8px;
+      background: var(--danger); color: #fff;
+      border: none; border-radius: 50%;
+      width: 22px; height: 22px;
+      font-size: .75rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+
+    /* ── Photo thumbnail in table ── */
+    .photo-thumb {
+      width: 40px; height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform .15s;
+      display: block;
+    }
+    .photo-thumb:hover { transform: scale(1.1); }
+
+    /* ── Photo lightbox ── */
+    #photo-lightbox {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.85);
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    #photo-lightbox.open { display: flex; }
+    #photo-lightbox img {
+      max-width: 92vw; max-height: 82vh;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    #photo-lightbox-caption { color: #fff; font-size: .9rem; opacity: .8; }
+    #photo-lightbox-close {
+      position: fixed; top: 20px; right: 20px;
+      background: rgba(255,255,255,.15);
+      border: none; color: #fff;
+      width: 40px; height: 40px; border-radius: 50%;
+      font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #photo-lightbox-close:hover { background: rgba(255,255,255,.3); }
+    #photo-lightbox-download {
+      background: var(--primary); color: #fff;
+      border: none; padding: 8px 18px;
+      border-radius: 6px; cursor: pointer;
+      font-size: .85rem; font-weight: 500;
+    }
+
     @media print {
       nav, header button, .form-actions, .filters button, #toast { display: none !important; }
       body { background: #fff; }
@@ -405,6 +484,20 @@
             </select>
           </div>
           <div class="form-group full">
+            <label>Receipt Photo</label>
+            <div class="photo-drop" id="photo-drop" onclick="document.getElementById('f-photo').click()">
+              <input type="file" id="f-photo" accept="image/*" capture="environment" />
+              <div class="photo-drop-label">
+                📷 <strong>Click to upload</strong> or drag &amp; drop a photo<br />
+                <span style="font-size:.78rem">JPG, PNG, HEIC — auto-compressed</span>
+              </div>
+              <div id="photo-preview-wrap" class="photo-preview-wrap" style="display:none">
+                <img id="photo-preview-img" src="" alt="Receipt preview" />
+                <button type="button" class="photo-remove-btn" id="photo-remove-btn" onclick="removePhoto(event)">✕</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group full">
             <label for="f-description">Description / Notes</label>
             <textarea id="f-description" placeholder="What was this expense for?"></textarea>
           </div>
@@ -495,12 +588,13 @@
               <th>Description</th>
               <th data-sort="payment">Payment <span class="sort-icon">↕</span></th>
               <th>Receipt</th>
+              <th style="text-align:center">Photo</th>
               <th data-sort="amount" style="text-align:right">Amount <span class="sort-icon">↕</span></th>
               <th style="text-align:center">Actions</th>
             </tr>
           </thead>
           <tbody id="expenses-body">
-            <tr><td colspan="8"><div class="empty"><div class="empty-icon">🧾</div><p>No expenses yet. <a href="#" id="add-first-link">Add your first one!</a></p></div></td></tr>
+            <tr><td colspan="9"><div class="empty"><div class="empty-icon">🧾</div><p>No expenses yet. <a href="#" id="add-first-link">Add your first one!</a></p></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -613,6 +707,16 @@
   </div>
 
 </main>
+
+<!-- Photo lightbox -->
+<div id="photo-lightbox">
+  <button id="photo-lightbox-close" onclick="closePhotoLightbox()">✕</button>
+  <img id="photo-lightbox-img" src="" alt="Receipt photo" />
+  <div style="display:flex;gap:12px;align-items:center">
+    <div id="photo-lightbox-caption"></div>
+    <button id="photo-lightbox-download" onclick="downloadLightboxPhoto()">Download</button>
+  </div>
+</div>
 
 <!-- Delete confirmation modal -->
 <div class="modal-overlay" id="delete-modal">
@@ -826,6 +930,10 @@ function resetForm() {
   document.getElementById('f-date').value = today();
   document.getElementById('f-taxdeductible').value = 'yes';
   document.getElementById('f-deductpct').value = '100';
+  pendingPhoto = null;
+  document.getElementById('photo-preview-img').src = '';
+  document.getElementById('photo-preview-wrap').style.display = 'none';
+  document.querySelector('#photo-drop .photo-drop-label').style.display = '';
 }
 
 document.querySelector('nav button[data-view="add"]').addEventListener('click', () => {
@@ -842,6 +950,7 @@ document.getElementById('expense-form').addEventListener('submit', e => {
   const id = document.getElementById('edit-id').value;
   const expenses = loadExpenses();
 
+  const receiptVal = document.getElementById('f-receipt').value;
   const exp = {
     id: id || genId(),
     date: document.getElementById('f-date').value,
@@ -849,10 +958,11 @@ document.getElementById('expense-form').addEventListener('submit', e => {
     vendor: document.getElementById('f-vendor').value.trim(),
     category: document.getElementById('f-category').value,
     payment: document.getElementById('f-payment').value,
-    receipt: document.getElementById('f-receipt').value,
+    receipt: pendingPhoto ? 'yes' : receiptVal,
     description: document.getElementById('f-description').value.trim(),
     taxDeductible: document.getElementById('f-taxdeductible').value,
     deductPct: document.getElementById('f-deductpct').value,
+    photo: pendingPhoto,
   };
 
   if (id) {
@@ -872,6 +982,7 @@ document.getElementById('expense-form').addEventListener('submit', e => {
 function editExpense(id) {
   const exp = loadExpenses().find(e => e.id === id);
   if (!exp) return;
+  resetForm();
   document.getElementById('edit-id').value = exp.id;
   document.getElementById('f-date').value = exp.date;
   document.getElementById('f-amount').value = exp.amount;
@@ -882,6 +993,7 @@ function editExpense(id) {
   document.getElementById('f-description').value = exp.description;
   document.getElementById('f-taxdeductible').value = exp.taxDeductible;
   document.getElementById('f-deductpct').value = exp.deductPct || 100;
+  if (exp.photo) showPhotoPreview(exp.photo);
   document.getElementById('add-form-title').textContent = 'Edit Expense';
   document.getElementById('form-submit-btn').textContent = 'Update Expense';
   showView('add');
@@ -940,13 +1052,16 @@ function renderExpenses() {
 
   const tbody = document.getElementById('expenses-body');
   if (!data.length) {
-    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">🧾</div><p>No expenses match your filters.</p></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty"><div class="empty-icon">🧾</div><p>No expenses match your filters.</p></div></td></tr>';
     return;
   }
   tbody.innerHTML = data.map(e => {
     const receiptIcon = e.receipt === 'yes' ? '<span class="receipt-yes" title="Receipt on hand">✓</span>'
       : e.receipt === 'digital' ? '<span class="receipt-yes" title="Digital receipt">📧</span>'
       : '<span class="receipt-no" title="Missing receipt">✗</span>';
+    const photoCell = e.photo
+      ? `<img class="photo-thumb" src="${e.photo}" alt="receipt" onclick="openPhotoLightbox('${e.id}')" />`
+      : '<span style="color:var(--border);font-size:.8rem">—</span>';
     return `
     <tr>
       <td style="white-space:nowrap">${formatDate(e.date)}</td>
@@ -955,6 +1070,7 @@ function renderExpenses() {
       <td style="color:var(--muted);font-size:.82rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.description || '—')}</td>
       <td style="font-size:.82rem">${esc(e.payment)}</td>
       <td style="text-align:center">${receiptIcon}</td>
+      <td style="text-align:center">${photoCell}</td>
       <td style="text-align:right" class="amount-positive">${currency(e.amount)}</td>
       <td style="text-align:center;white-space:nowrap">
         <button class="btn btn-outline btn-sm" onclick="editExpense('${e.id}')">Edit</button>
@@ -1223,6 +1339,113 @@ document.getElementById('clear-data-btn').addEventListener('click', () => {
     toast('All expense data cleared.');
     renderDashboard();
   }
+});
+
+/* ══════════════════════════════════════════════
+   Photo Upload
+══════════════════════════════════════════════ */
+let pendingPhoto = null; // base64 string or null
+
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = ev => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const MAX = 1200;
+        let { width, height } = img;
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
+          else { width = Math.round(width * MAX / height); height = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function showPhotoPreview(dataUrl) {
+  pendingPhoto = dataUrl;
+  document.getElementById('photo-preview-img').src = dataUrl;
+  document.getElementById('photo-preview-wrap').style.display = 'inline-block';
+  document.querySelector('#photo-drop .photo-drop-label').style.display = 'none';
+}
+
+function removePhoto(e) {
+  e.stopPropagation();
+  pendingPhoto = null;
+  document.getElementById('f-photo').value = '';
+  document.getElementById('photo-preview-img').src = '';
+  document.getElementById('photo-preview-wrap').style.display = 'none';
+  document.querySelector('#photo-drop .photo-drop-label').style.display = '';
+}
+
+document.getElementById('f-photo').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const dataUrl = await compressImage(file);
+    showPhotoPreview(dataUrl);
+  } catch { toast('Could not load image.'); }
+});
+
+const dropZone = document.getElementById('photo-drop');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', async e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) { toast('Please drop an image file.'); return; }
+  try {
+    const dataUrl = await compressImage(file);
+    showPhotoPreview(dataUrl);
+  } catch { toast('Could not load image.'); }
+});
+
+/* ── Lightbox ── */
+let lightboxDataUrl = null;
+let lightboxVendor = '';
+
+function openPhotoLightbox(idOrUrl, vendor) {
+  let dataUrl = idOrUrl, v = vendor || '';
+  if (!idOrUrl.startsWith('data:')) {
+    const exp = loadExpenses().find(e => e.id === idOrUrl);
+    if (!exp || !exp.photo) return;
+    dataUrl = exp.photo; v = exp.vendor || '';
+  }
+  lightboxDataUrl = dataUrl;
+  lightboxVendor = v;
+  document.getElementById('photo-lightbox-img').src = dataUrl;
+  document.getElementById('photo-lightbox-caption').textContent = v ? 'Receipt — ' + v : 'Receipt photo';
+  document.getElementById('photo-lightbox').classList.add('open');
+}
+
+function closePhotoLightbox() {
+  document.getElementById('photo-lightbox').classList.remove('open');
+}
+
+function downloadLightboxPhoto() {
+  if (!lightboxDataUrl) return;
+  const a = document.createElement('a');
+  a.href = lightboxDataUrl;
+  a.download = 'receipt-' + (lightboxVendor || 'photo').replace(/\s+/g, '-').toLowerCase() + '.jpg';
+  a.click();
+}
+
+document.getElementById('photo-lightbox').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closePhotoLightbox();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closePhotoLightbox();
 });
 
 /* ══════════════════════════════════════════════
