@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.gifthomeownersupport.com/sitemap.xml
+Sitemap: https://gifthomeownersupport.com/sitemap.xml
