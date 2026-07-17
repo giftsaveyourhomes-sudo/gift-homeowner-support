@@ -88,6 +88,7 @@
     .subnote{color:var(--muted); font-size:13.5px; margin-top:10px;}
 
     .hero{display:grid; grid-template-columns: 1.15fr .85fr; gap:18px; align-items:stretch; margin-top:18px;}
+    .hero-top{display:grid; grid-template-columns: 1fr auto; gap:18px; align-items:center;}
     .ctaRow{display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;}
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
@@ -237,10 +238,19 @@
 
     @media (max-width: 920px){
       .hero{grid-template-columns:1fr;}
+      .hero-top{grid-template-columns:1fr; text-align:center;}
+      .hero-top > div:last-child{order:-1;}
       .grid{grid-template-columns:1fr;}
       .twoCol{grid-template-columns:1fr;}
       h1{font-size:34px;}
-      header{position:relative;}
+      header{position:relative; flex-direction:column; align-items:flex-start; gap:10px;}
+      nav{width:100%; justify-content:flex-start;}
+    }
+
+    @media (max-width: 480px){
+      h1{font-size:26px;}
+      .kicker{font-size:12px;}
+      .lead{font-size:16px;}
     }
   </style>
 </head>
@@ -256,16 +266,10 @@
         </div>
       </a>
       <nav>
-        <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a href="#services">Options</a>
-        <a href="#process">Process</a>
         <a href="testimonials.html">Stories</a>
         <a href="blog.html">Blog</a>
-        <a href="resources.html">Resources</a>
-        <a href="#faq">FAQ</a>
         <a href="#contact">Contact</a>
-        <a href="#legal">Legal</a>
       </nav>
     </header>
 
@@ -273,7 +277,7 @@
 
       <!-- HERO -->
       <section class="hero">
-        <div class="card" style="display:grid; grid-template-columns: 1fr auto; gap:18px; align-items:center;">
+        <div class="card hero-top">
           <div>
             <div class="kicker">For homeowners facing foreclosure or a distressed home situation</div>
 
@@ -285,19 +289,12 @@
             </div>
 
             <p class="lead">
-              Aloha — I'm Gift, a homeowner advocate on Oʻahu. I help you understand your situation, confirm deadlines, and learn every option available to you.
-              <strong>This information and support is 100% FREE for homeowners.</strong>
+              Aloha — I'm Gift, a homeowner advocate on Oʻahu. <strong>100% free.</strong> One conversation could show you options you didn't know you had.
             </p>
-
-            <div class="subnote">
-              Foreclosure • Probate / inherited homes • Tax liens • HOA liens • Vacant & distressed homes
-              <br /><strong>Confidential • No pressure to sell</strong>
-            </div>
 
             <div class="ctaRow">
               <a class="btn primary" href="tel:+18082155828" aria-label="Call or text Gift at 808 215 5828">Call/Text: (808) 215-5828</a>
               <a class="btn gold" href="#contact">Get free help</a>
-              <a class="btn" href="mailto:gift.saveyourhomes@gmail.com">Email Gift</a>
             </div>
 
             <div style="margin-top:14px">
@@ -307,14 +304,8 @@
               <span class="pill"><strong>500+ homeowners helped</strong></span>
             </div>
 
-            <div class="card" style="margin-top:12px; background:rgba(245,158,11,.10); border-color:rgba(245,158,11,.35); padding:12px 14px; border-radius:14px; box-shadow:none;">
-              <div style="font-weight:800; font-size:13.5px; color:#0f172a;">
-                Important: I am a homeowner advocate, not an attorney, real estate licensee, financial advisor, or HUD-approved counselor.
-                Nothing here is legal, financial, tax, or real estate advice. I don't negotiate with lenders on your behalf. When those services
-                are needed, I connect you with licensed professionals.
-                If a homeowner has exhausted all options — or simply decides selling is the right path — I may, in some cases, be interested in purchasing the home.
-                This is always disclosed upfront. You are never pressured or obligated to sell to anyone.
-              </div>
+            <div class="fineprint" style="margin-top:14px;">
+              Not legal/financial advice — I'm an advocate, not an attorney. <a href="#legal">Full disclaimer →</a>
             </div>
           </div>
 
@@ -327,16 +318,14 @@
 
         <aside class="card">
           <div class="kicker">What happens first</div>
-          <h3 style="margin:6px 0 10px">Understanding your situation — step by step</h3>
           <ul>
-            <li><strong>Confirm real deadlines</strong> — foreclosure sale dates, court dates, and notices often have more flexibility than homeowners realize</li>
-            <li><strong>Learn all available options</strong> — keeping the home, pausing the process, negotiating, selling, or transitioning</li>
-            <li><strong>Get a clear path forward</strong> — connected to the right resources, with someone beside you every step of the way</li>
+            <li><strong>Confirm your real deadlines</strong></li>
+            <li><strong>Learn every option available</strong></li>
+            <li><strong>Get a clear path forward</strong></li>
           </ul>
-          <div class="subnote" style="margin-top:14px">You're not alone — calm support, clear steps, no shame.</div>
 
-          <blockquote class="testimonial-quote" style="margin-top:18px;">
-            <p>"I was ignoring the mail because I was so scared. Gift sat down with me, opened the envelopes, and explained what they meant in plain English. We found a way to pause the auction and I had time to breathe again."</p>
+          <blockquote class="testimonial-quote" style="margin-top:16px;">
+            <p>"Gift explained the mail I was too scared to open. We paused the auction and I could breathe again."</p>
             <cite>— Local Homeowner, Waipahu, HI</cite>
           </blockquote>
           <a href="testimonials.html" style="display:inline-block; margin-top:10px; font-size:13px; font-weight:700;">Read more stories →</a>
@@ -348,10 +337,7 @@
       <!-- IS THIS YOU -->
       <section class="section" id="fit">
         <div class="card">
-          <div class="kicker">Know your situation</div>
-          <h2>Situations where homeowners often have more options than they realize</h2>
-          <p class="muted" style="margin-top:-2px">Many homeowners don't act because they don't know what's available to them. If any of these apply, there is likely more time — and more options — than you think.</p>
-
+          <h2>Does this sound like you?</h2>
           <div style="margin-top:10px">
             <span class="pill">Behind on mortgage</span>
             <span class="pill">Received a foreclosure notice</span>
@@ -360,51 +346,29 @@
             <span class="pill">HOA lien</span>
             <span class="pill">Vacant / distressed property</span>
             <span class="pill">Hardship (job loss, illness, divorce)</span>
-            <span class="pill">Overwhelmed by paperwork</span>
           </div>
-
-          <div class="subnote" style="margin-top:12px">
-            The first step is simply understanding what you're actually facing — real deadlines, real options, and what each one means for you.
-          </div>
+          <div class="subnote" style="margin-top:12px">You likely have more time and options than you think.</div>
         </div>
       </section>
 
       <!-- OPTIONS -->
       <section class="section" id="services">
         <div class="card">
-          <div class="kicker">Know your options</div>
-          <h2>What homeowners in distress should know</h2>
-
+          <h2>Your options</h2>
           <div class="grid" style="margin-top:10px">
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
-              <h3>Keeping your home: what's possible</h3>
-              <p>
-                Many homeowners don't know that options like loan modification, repayment plans, or hardship programs may still be available —
-                even after receiving a foreclosure notice. Understanding these options is the first step.
-                I help you organize documents and understand the general landscape. For negotiation with lenders or legal proceedings,
-                I <strong>connect you with trusted, licensed professionals</strong> like attorneys and HUD-approved counselors.
-              </p>
-              <div class="subnote">Learning what's available costs nothing — and could change everything.</div>
+            <div class="card">
+              <h3>Keep your home</h3>
+              <p>Loan mods, repayment plans & hardship programs — even after a notice.</p>
             </div>
-
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
-              <h3>Selling your home: when and how it works</h3>
-              <p>
-                If selling turns out to be the best path, it helps to understand the timeline, what a fair process looks like, and what questions to ask.
-                I can help you understand your options and
-                <strong>connect you with ethical, licensed professionals</strong> — including reputable buyers if that's the direction you choose.
-                I can also help with <strong>clean-out, preparation, and finding your next place</strong>.
-              </p>
-              <div class="subnote"><strong>No pressure. Ever.</strong> You decide. I don't receive referral fees or commissions from anyone I connect you with.</div>
+            <div class="card">
+              <h3>Sell your home</h3>
+              <p>Fair timeline, ethical buyers. No pressure, no referral fees taken.</p>
             </div>
-
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
-              <h3>Probate, liens & other situations</h3>
-              <p>Inherited homes, tax liens, and HOA liens each come with their own rules, timelines, and options that most homeowners aren't aware of. Understanding the basics can prevent costly mistakes.</p>
-              <div class="subnote">Every situation is different — the goal is to understand yours clearly before making any decisions.</div>
+            <div class="card">
+              <h3>Probate & liens</h3>
+              <p>Inherited homes, tax liens, HOA liens — know the basics first.</p>
             </div>
           </div>
-
           <div class="ctaRow" style="margin-top:16px">
             <a class="btn primary" href="tel:+18082155828">Call/Text to learn more</a>
             <a class="btn gold" href="#contact">Ask a question — free</a>
@@ -412,80 +376,29 @@
         </div>
       </section>
 
-      <!-- WHY + IMPACT -->
-      <section class="section" id="why">
-        <div class="twoCol">
-          <div class="card">
-            <div class="kicker">What this support looks like</div>
-            <h2>Independent guidance. No agenda.</h2>
-            <p>With a Ph.D. in Business Administration and over a decade of financial experience, I help you understand your situation in plain language — so you can make your own informed decision.</p>
-            <ul>
-              <li><strong>Free:</strong> no charge, ever</li>
-              <li><strong>Clear:</strong> plain-language information, no jargon</li>
-              <li><strong>Connected:</strong> trusted, verified professionals when you need them</li>
-              <li><strong>Respectful:</strong> your home, your choice — always</li>
-            </ul>
-          </div>
-
-          <div class="card">
-            <div class="kicker">Community impact</div>
-            <h2>Why I do this</h2>
-            <p>I've seen firsthand what happens when a homeowner doesn't know their options — and I decided to do something about it. For the past two years, I've dedicated my time to making sure no neighbor on Oʻahu faces that alone.</p>
-            <p><strong>500+ Oʻahu homeowners helped</strong> — all free of charge, all with the same goal: make sure you know every option before any decision is made.</p>
-            <blockquote style="margin:14px 0; padding:14px; border-left:4px solid var(--accent); background:rgba(37,99,235,.08); border-radius: 0 10px 10px 0;">
-              Let's talk stories and figure out what's right for you.
-            </blockquote>
-          </div>
-        </div>
-      </section>
-
-      <!-- PROCESS -->
+      <!-- WHY + PROCESS -->
       <section class="section" id="process" style="background: linear-gradient(180deg, rgba(37,99,235,.06), rgba(245,249,255,1)); border-radius:24px; padding:12px;">
         <div class="card">
-          <div class="kicker">What the process looks like</div>
-          <h2>How it typically works</h2>
+          <h2>How it works</h2>
           <div class="steps">
-            <div class="step"><div class="badge">1</div><div><strong>Stabilize</strong><div class="muted">Understand the real deadlines and immediate risks — so you know what you're actually facing</div></div></div>
-            <div class="step"><div class="badge">2</div><div><strong>Choose</strong><div class="muted">Learn all available options and what each one means — then decide what's right for you</div></div></div>
-            <div class="step"><div class="badge">3</div><div><strong>Act</strong><div class="muted">Move forward with a clear plan, the right connections, and someone in your corner</div></div></div>
+            <div class="step"><div class="badge">1</div><div><strong>Stabilize</strong><div class="muted">Understand your real deadlines</div></div></div>
+            <div class="step"><div class="badge">2</div><div><strong>Choose</strong><div class="muted">Learn every option, decide what's right for you</div></div></div>
+            <div class="step"><div class="badge">3</div><div><strong>Act</strong><div class="muted">Move forward with a clear plan</div></div></div>
           </div>
+          <div class="subnote" style="margin-top:14px">Ph.D., decade of financial experience, 500+ Oʻahu homeowners helped — free, always.</div>
         </div>
       </section>
 
       <!-- RECENT ARTICLES -->
       <section class="section" id="articles">
         <div class="card">
-          <div class="kicker">Free Education</div>
-          <h2>What Every Oʻahu Homeowner Should Know</h2>
-          <p style="color:var(--muted);margin-bottom:20px;">Free articles to help you understand your situation — before making any decisions.</p>
-          <div style="display:flex;flex-direction:column;gap:12px;">
-            <a href="vacant-home-dangers-hawaii.html" style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:12px;text-decoration:none;">
-              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);">Vacant Property</span>
-              <span style="font-weight:700;color:var(--text);">The Hidden Dangers of a Vacant Home in Hawaiʻi</span>
-              <span style="font-size:13px;color:var(--muted);">Insurance gaps, squatters, and mold — what to know before leaving a property empty.</span>
-            </a>
-            <a href="what-is-probate-hawaii.html" style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:12px;text-decoration:none;">
-              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);">Probate</span>
-              <span style="font-weight:700;color:var(--text);">What Is Probate — and Do You Need It?</span>
-              <span style="font-size:13px;color:var(--muted);">Not every estate requires probate — but many do. Here's when it applies on Oʻahu.</span>
-            </a>
-            <a href="behind-on-mortgage-hawaii.html" style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:12px;text-decoration:none;">
-              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);">Mortgage</span>
-              <span style="font-weight:700;color:var(--text);">Behind on Your Mortgage in Hawaiʻi? Here's What to Do Next</span>
-              <span style="font-size:13px;color:var(--muted);">You have more time and more options than you think. Here's where to start.</span>
-            </a>
-            <a href="foreclosure-notice-hawaii.html" style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:12px;text-decoration:none;">
-              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);">Foreclosure</span>
-              <span style="font-weight:700;color:var(--text);">What to Do When You Receive a Foreclosure Notice in Hawaiʻi</span>
-              <span style="font-size:13px;color:var(--muted);">Receiving a notice is not the end — here's what it actually means and what to do.</span>
-            </a>
-            <a href="loan-modification-hawaii.html" style="display:flex;flex-direction:column;gap:2px;padding:14px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:12px;text-decoration:none;">
-              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);">Loan & Mortgage</span>
-              <span style="font-weight:700;color:var(--text);">What Is a Loan Modification — and How Do You Ask for One?</span>
-              <span style="font-size:13px;color:var(--muted);">A loan modification can permanently change your terms — here's who qualifies and how to ask.</span>
-            </a>
+          <h2>Free articles</h2>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+            <a href="vacant-home-dangers-hawaii.html" style="padding:12px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:12px;text-decoration:none;font-weight:700;color:var(--text);">The Hidden Dangers of a Vacant Home in Hawaiʻi →</a>
+            <a href="bankruptcy-foreclosure-hawaii.html" style="padding:12px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:12px;text-decoration:none;font-weight:700;color:var(--text);">Can Bankruptcy Stop Foreclosure in Hawaiʻi? →</a>
+            <a href="behind-on-mortgage-hawaii.html" style="padding:12px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:12px;text-decoration:none;font-weight:700;color:var(--text);">Behind on Your Mortgage? Here's What to Do Next →</a>
           </div>
-          <div style="margin-top:16px;">
+          <div style="margin-top:14px;">
             <a href="blog.html" style="font-size:14px;font-weight:700;color:var(--accent);">View all free articles →</a>
           </div>
         </div>
@@ -528,14 +441,12 @@
       <section class="section" id="contact">
         <div class="card">
           <div class="kicker">Contact</div>
-          <h2>Text or call me — fastest response</h2>
+          <h2>One free call could change everything</h2>
+          <p class="muted" style="margin-top:-4px;">Most homeowners feel real relief after just one conversation. No cost, no obligation — ever.</p>
 
           <div style="margin-top:12px">
-            <p style="margin:0 0 8px"><strong>Gift (Sakawrat Kitkuakul, Ph.D.)</strong></p>
-            <p style="margin:0 0 8px"><strong>Phone/Text:</strong> <a href="tel:+18082155828">(808) 215-5828</a></p>
-            <p style="margin:0 0 8px"><strong>Email:</strong> <a href="mailto:gift.saveyourhomes@gmail.com">gift.saveyourhomes@gmail.com</a></p>
-            <p style="margin:0 0 8px"><strong>Service area:</strong> Oʻahu, Hawaiʻi</p>
-            <div class="subnote">If I miss your call, I will return it.</div>
+            <p style="margin:0 0 8px"><strong>Phone/Text:</strong> <a href="tel:+18082155828">(808) 215-5828</a> &nbsp;·&nbsp; <strong>Email:</strong> <a href="mailto:gift.saveyourhomes@gmail.com">gift.saveyourhomes@gmail.com</a></p>
+            <div class="subnote">Serving Oʻahu. If I miss your call, I will return it.</div>
             <p class="fineprint" style="margin-top:10px">In immediate danger of losing housing? Contact a HUD-approved counselor or Legal Aid right away.</p>
           </div>
 
@@ -568,47 +479,52 @@
           <div class="kicker">Disclaimer &amp; Privacy</div>
           <h2>Important information</h2>
 
-          <h3 style="margin:14px 0 6px; font-size:16px;">Not professional advice</h3>
-          <p class="fineprint">
-            Sakawrat "Gift" Kitkuakul is a homeowner advocate and is <strong>not</strong> a licensed attorney, real estate broker or salesperson,
-            mortgage professional, financial advisor, tax advisor, or HUD-approved housing counselor. Information provided through this website or in
-            person is general and educational only and is <strong>not</strong> legal, financial, tax, or real estate advice. No advocate-client,
-            attorney-client, or fiduciary relationship is created by using this site or contacting me.
-          </p>
+          <details>
+            <summary>Not professional advice</summary>
+            <p class="fineprint">
+              Sakawrat "Gift" Kitkuakul is a homeowner advocate and is <strong>not</strong> a licensed attorney, real estate broker or salesperson,
+              mortgage professional, financial advisor, tax advisor, or HUD-approved housing counselor. Information provided through this website or in
+              person is general and educational only and is <strong>not</strong> legal, financial, tax, or real estate advice. No advocate-client,
+              attorney-client, or fiduciary relationship is created by using this site or contacting me.
+            </p>
+          </details>
 
-          <h3 style="margin:14px 0 6px; font-size:16px;">No negotiation or representation</h3>
-          <p class="fineprint">
-            I do not negotiate with lenders, servicers, or creditors on your behalf, and I do not represent you in any legal or financial matter.
-            For those services, I connect you with appropriately licensed professionals so you can decide who to work with.
-          </p>
+          <details>
+            <summary>No negotiation, fees, or referral compensation</summary>
+            <p class="fineprint">
+              I do not negotiate with lenders, servicers, or creditors on your behalf, and I do not represent you in any legal or financial matter.
+              My support is free to homeowners — I do not charge fees, request advance payments, or take any portion of your money or property, and
+              I do not receive referral fees, commissions, or other compensation from any professional, buyer, or company I may connect you with.
+              In some cases, I may be interested in purchasing a home if the homeowner chooses to sell — this is always disclosed upfront and you are never obligated to sell to anyone.
+            </p>
+          </details>
 
-          <h3 style="margin:14px 0 6px; font-size:16px;">No fees and no referral compensation</h3>
-          <p class="fineprint">
-            My support is free to homeowners. I do not charge fees, request advance payments, or take any portion of your money or property.
-            I do not receive referral fees, commissions, or other compensation from any professional, buyer, or company I may connect you with.
-            In some cases, I may be interested in purchasing a home if the homeowner chooses to sell — this is always disclosed upfront and you are never obligated to sell to anyone.
-          </p>
+          <details>
+            <summary>Urgent situations</summary>
+            <p class="fineprint">
+              If you are facing an imminent foreclosure sale or court deadline, contact a licensed Hawaiʻi attorney, Legal Aid Society of Hawaiʻi,
+              or a HUD-approved housing counselor immediately. Do not rely on this website in place of timely professional advice.
+            </p>
+          </details>
 
-          <h3 style="margin:14px 0 6px; font-size:16px;">Urgent situations</h3>
-          <p class="fineprint">
-            If you are facing an imminent foreclosure sale or court deadline, contact a licensed Hawaiʻi attorney, Legal Aid Society of Hawaiʻi,
-            or a HUD-approved housing counselor immediately. Do not rely on this website in place of timely professional advice.
-          </p>
+          <details>
+            <summary>Privacy</summary>
+            <p class="fineprint">
+              When you contact me or submit the form on this site, I collect only the information you choose to provide (such as your name, phone,
+              email, and message). This is delivered through a third-party form service (Formspree) and used solely to respond to your request.
+              I do not sell your information or share it for marketing. I may share details with a professional only with your permission, to help you.
+              You can ask me to delete your information at any time.
+            </p>
+          </details>
 
-          <h3 style="margin:14px 0 6px; font-size:16px;">Privacy</h3>
-          <p class="fineprint">
-            When you contact me or submit the form on this site, I collect only the information you choose to provide (such as your name, phone,
-            email, and message). This is delivered through a third-party form service (Formspree) and used solely to respond to your request.
-            I do not sell your information or share it for marketing. I may share details with a professional only with your permission, to help you.
-            You can ask me to delete your information at any time.
-          </p>
-
-          <h3 style="margin:14px 0 6px; font-size:16px;">Limitation of liability</h3>
-          <p class="fineprint">
-            This website and the general support offered are provided "as is," without warranties of any kind. To the fullest extent permitted by law,
-            I am not liable for any decision you make or any outcome related to your property, finances, or legal situation. Decisions about your home
-            are yours alone, ideally made with licensed professionals.
-          </p>
+          <details>
+            <summary>Limitation of liability</summary>
+            <p class="fineprint">
+              This website and the general support offered are provided "as is," without warranties of any kind. To the fullest extent permitted by law,
+              I am not liable for any decision you make or any outcome related to your property, finances, or legal situation. Decisions about your home
+              are yours alone, ideally made with licensed professionals.
+            </p>
+          </details>
         </div>
       </section>
 
