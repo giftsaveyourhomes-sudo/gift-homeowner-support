@@ -1,731 +1,731 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LLC Expense Tracker</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Solopreneur Expense Tracker</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-    :root {
-      --bg: #f4f6f9;
-      --card: #ffffff;
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --warning: #d97706;
-      --text: #1e293b;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --radius: 8px;
-      --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
-      --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
-    }
+:root{
+  --sb:#0B2043;--sb-hover:rgba(255,255,255,.07);--sb-active:rgba(255,255,255,.13);
+  --sb-text:rgba(255,255,255,.62);--sb-text-a:#fff;
+  --green:#2CA01C;--green-dk:#1F7315;--green-bg:#EBF6E9;
+  --blue:#0070CC;--blue-bg:#E5F2FF;
+  --bg:#F2F4F7;--card:#fff;--text:#18212E;--muted:#647181;--border:#DDE2EB;
+  --danger:#CC3525;--danger-bg:#FEF0EE;
+  --r:5px;--sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --sh-md:0 4px 16px rgba(0,0,0,.1);
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#0D1320;--card:#151E2E;--text:#E2E8F3;--muted:#8694A8;--border:#233049;
+        --green-bg:#0F2A0C;--blue-bg:#0A1E35;--danger-bg:#2A0F0C}
+}
+:root[data-theme="light"]{--bg:#F2F4F7;--card:#fff;--text:#18212E;--muted:#647181;--border:#DDE2EB;--green-bg:#EBF6E9;--blue-bg:#E5F2FF;--danger-bg:#FEF0EE}
+:root[data-theme="dark"]{--bg:#0D1320;--card:#151E2E;--text:#E2E8F3;--muted:#8694A8;--border:#233049;--green-bg:#0F2A0C;--blue-bg:#0A1E35;--danger-bg:#2A0F0C}
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+     background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:14px;line-height:1.5}
 
-    header {
-      background: var(--primary);
-      color: #fff;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 8px rgba(37,99,235,.4);
-    }
-    header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; }
-    header span { font-size: .85rem; opacity: .85; }
+/* ── Sidebar ── */
+.sidebar{width:220px;background:var(--sb);flex-shrink:0;position:fixed;height:100vh;
+         overflow-y:auto;display:flex;flex-direction:column;z-index:100}
+.sb-brand{padding:18px 14px 16px;border-bottom:1px solid rgba(255,255,255,.08);
+          display:flex;align-items:center;gap:10px}
+.sb-logo{width:30px;height:30px;background:var(--green);border-radius:6px;
+         display:flex;align-items:center;justify-content:center;
+         font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.sb-name{font-size:.82rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.sb-sub{font-size:.68rem;color:var(--sb-text);margin-top:1px}
+.sb-nav{padding:10px 7px;flex:1;display:flex;flex-direction:column;gap:1px}
+.sb-section{font-size:.65rem;text-transform:uppercase;letter-spacing:.09em;
+            color:rgba(255,255,255,.3);padding:10px 9px 3px;font-weight:600}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:4px;
+         border:none;background:none;color:var(--sb-text);cursor:pointer;
+         font-size:.84rem;font-weight:500;width:100%;text-align:left;
+         transition:background .12s,color .12s;position:relative;font-family:inherit}
+.nav-btn:hover{background:var(--sb-hover);color:rgba(255,255,255,.88)}
+.nav-btn.active{background:var(--sb-active);color:var(--sb-text-a)}
+.nav-btn.active::before{content:'';position:absolute;left:0;top:5px;bottom:5px;
+                         width:3px;background:var(--green);border-radius:0 3px 3px 0}
+.nav-btn svg{flex-shrink:0;opacity:.75}
+.nav-btn.active svg{opacity:1}
+.sb-footer{padding:7px;border-top:1px solid rgba(255,255,255,.07)}
+.sb-spacer{flex:1}
 
-    nav {
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      gap: 4px;
-      padding: 0 24px;
-    }
-    nav button {
-      padding: 12px 18px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: .9rem;
-      color: var(--muted);
-      border-bottom: 3px solid transparent;
-      transition: all .15s;
-      font-weight: 500;
-    }
-    nav button.active { color: var(--primary); border-bottom-color: var(--primary); }
-    nav button:hover:not(.active) { color: var(--text); }
+/* ── Main ── */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);
+        padding:0 22px;height:54px;display:flex;align-items:center;
+        justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-l{display:flex;align-items:center;gap:10px}
+.topbar-title{font-size:.95rem;font-weight:700;color:var(--text)}
+.topbar-r{display:flex;align-items:center;gap:10px}
+.company-chip{font-size:.75rem;color:var(--muted);font-weight:500}
+.content{padding:22px}
 
-    main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+/* ── Views ── */
+.view{display:none}.view.active{display:block}
 
-    .view { display: none; }
-    .view.active { display: block; }
+/* ── Buttons ── */
+.btn{padding:7px 14px;border-radius:var(--r);border:none;cursor:pointer;
+     font-size:.82rem;font-weight:600;transition:all .12s;font-family:inherit;
+     display:inline-flex;align-items:center;gap:5px}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:var(--green-dk)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-ghost:hover{border-color:var(--muted)}
+.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#a82a1e}
+.btn-link{background:none;border:none;color:var(--blue);padding:0;font-size:.82rem;
+          font-weight:500;cursor:pointer;font-family:inherit}
+.btn-sm{padding:5px 10px;font-size:.76rem}
 
-    /* ── Cards ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+      box-shadow:var(--sh);padding:18px;margin-bottom:14px}
+.card-title{font-size:.7rem;font-weight:700;text-transform:uppercase;
+            letter-spacing:.07em;color:var(--muted);margin-bottom:12px}
 
-    /* ── Summary tiles ── */
-    .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; margin-bottom: 20px; }
-    .tile {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-    }
-    .tile-label { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 6px; }
-    .tile-value { font-size: 1.7rem; font-weight: 700; color: var(--text); }
-    .tile-value.danger { color: var(--danger); }
-    .tile-value.success { color: var(--success); }
-    .tile-sub { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+/* ── P&L banner ── */
+.pl-banner{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+           box-shadow:var(--sh);padding:18px 22px;margin-bottom:14px;
+           display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.pl-main .pl-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;
+                 letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+.pl-main .pl-amt{font-size:2rem;font-weight:800;color:var(--danger);
+                 letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.pl-main .pl-sub{font-size:.75rem;color:var(--muted);margin-top:5px}
+.pl-stats{display:flex;gap:28px}
+.pl-stat .ps-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;
+                 letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+.pl-stat .ps-val{font-size:1rem;font-weight:700;font-variant-numeric:tabular-nums}
+.ps-val.g{color:var(--green)}.ps-val.r{color:var(--danger)}
 
-    /* ── Form ── */
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group.full { grid-column: 1 / -1; }
-    label { font-size: .85rem; font-weight: 500; color: var(--text); }
-    input, select, textarea {
-      padding: 9px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: .9rem;
-      color: var(--text);
-      background: #fff;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37,99,235,.15);
-    }
-    textarea { resize: vertical; min-height: 72px; }
+/* ── Period tabs ── */
+.period-wrap{display:flex;gap:3px;margin-bottom:14px;background:var(--card);
+             border:1px solid var(--border);border-radius:var(--r);
+             padding:3px;width:fit-content;box-shadow:var(--sh)}
+.ptab{padding:4px 13px;border-radius:3px;border:none;background:none;
+      font-size:.76rem;font-weight:600;color:var(--muted);cursor:pointer;
+      transition:all .12s;font-family:inherit}
+.ptab.active{background:var(--green);color:#fff}
+.ptab:hover:not(.active){background:var(--bg);color:var(--text)}
 
-    /* ── Buttons ── */
-    .btn {
-      padding: 9px 18px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      font-size: .9rem;
-      font-weight: 500;
-      transition: all .15s;
-    }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-outline:hover { background: var(--bg); }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-danger:hover { background: #b91c1c; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-success:hover { background: #15803d; }
-    .btn-sm { padding: 5px 10px; font-size: .8rem; }
+/* ── Tiles ── */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:14px}
+.tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+      box-shadow:var(--sh);padding:15px}
+.tile-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;
+          letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+.tile-val{font-size:1.35rem;font-weight:800;color:var(--text);
+          letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile-val.r{color:var(--danger)}.tile-val.g{color:var(--green)}
+.tile-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
 
-    .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+/* ── Two-col dash grid ── */
+.dash-grid{display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start}
+@media(max-width:900px){.dash-grid{grid-template-columns:1fr}}
 
-    /* ── Table ── */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
-    th {
-      text-align: left;
-      padding: 10px 12px;
-      font-size: .78rem;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      color: var(--muted);
-      border-bottom: 2px solid var(--border);
-      cursor: pointer;
-      user-select: none;
-      white-space: nowrap;
-    }
-    th:hover { color: var(--text); }
-    th .sort-icon { margin-left: 4px; opacity: .5; }
-    th.sorted .sort-icon { opacity: 1; color: var(--primary); }
-    td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f8fafc; }
+/* ── Category bars ── */
+.cat-list{display:flex;flex-direction:column;gap:9px}
+.cat-row{display:grid;grid-template-columns:150px 1fr 82px;align-items:center;gap:10px}
+.cat-name{font-size:.8rem;font-weight:500}
+.bar-track{background:var(--border);border-radius:999px;height:6px;overflow:hidden}
+.bar-fill{height:100%;border-radius:999px;background:var(--green);transition:width .4s ease}
+.cat-amt{font-size:.8rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: .75rem;
-      font-weight: 500;
-    }
+/* ── Top-list ── */
+.top-row{display:flex;justify-content:space-between;align-items:center;
+         padding:8px 0;border-bottom:1px solid var(--border)}
+.top-row:last-child{border-bottom:none}
+.top-vendor{font-weight:600;font-size:.84rem}
+.top-meta{font-size:.7rem;color:var(--muted);margin-top:2px}
 
-    /* category colours */
-    .cat-office       { background:#dbeafe; color:#1e40af; }
-    .cat-software     { background:#ede9fe; color:#5b21b6; }
-    .cat-marketing    { background:#fce7f3; color:#9d174d; }
-    .cat-travel       { background:#d1fae5; color:#065f46; }
-    .cat-meals        { background:#fef3c7; color:#92400e; }
-    .cat-professional { background:#ffedd5; color:#9a3412; }
-    .cat-utilities    { background:#e0f2fe; color:#0c4a6e; }
-    .cat-insurance    { background:#f0fdf4; color:#14532d; }
-    .cat-equipment    { background:#fdf4ff; color:#6b21a8; }
-    .cat-payroll      { background:#fff1f2; color:#881337; }
-    .cat-other        { background:#f1f5f9; color:#475569; }
+/* ── Badges ── */
+.badge{display:inline-block;padding:2px 6px;border-radius:3px;
+       font-size:.69rem;font-weight:600;letter-spacing:.01em;white-space:nowrap}
 
-    /* ── Filters ── */
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 16px;
-      align-items: flex-end;
-    }
-    .filters .form-group { flex: 1; min-width: 140px; }
-    .filters .form-group label { font-size: .78rem; }
+/* Schedule C badge palette — light */
+.cat-advertising{background:#FFF0E6;color:#B84400}
+.cat-car{background:#E6F0FF;color:#1845A0}
+.cat-contract{background:#F0E6FF;color:#5B21B6}
+.cat-insurance{background:#E6F7EC;color:#0A6B35}
+.cat-legal{background:#E5EEF9;color:#0F3467}
+.cat-meals{background:#FFF7E0;color:#8A5A00}
+.cat-office{background:#E0F5FF;color:#0A5580}
+.cat-rent{background:#F0E6FD;color:#5A1590}
+.cat-repairs{background:#FFF0E8;color:#943300}
+.cat-supplies{background:#E0FBF5;color:#0A6B55}
+.cat-taxes{background:#FFEBEB;color:#991111}
+.cat-travel{background:#E6F9EF;color:#0A5E2A}
+.cat-utilities{background:#E6EEFF;color:#1B3FAB}
+.cat-wages{background:#FDE8F4;color:#8C1550}
+.cat-other{background:#F0F2F5;color:#475567}
 
-    /* ── Category chart ── */
-    .cat-list { display: flex; flex-direction: column; gap: 12px; }
-    .cat-row { display: grid; grid-template-columns: 150px 1fr 80px; align-items: center; gap: 12px; }
-    .cat-name { font-size: .85rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .bar-track { background: var(--border); border-radius: 999px; height: 8px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 999px; background: var(--primary); transition: width .4s; }
-    .cat-amount { font-size: .85rem; font-weight: 600; text-align: right; }
+/* dark overrides */
+@media(prefers-color-scheme:dark){
+  .cat-advertising{background:#2A1500;color:#FF9055}
+  .cat-car{background:#001535;color:#7AABFF}
+  .cat-contract{background:#1A0035;color:#C4A0FF}
+  .cat-insurance{background:#001A0C;color:#5CD690}
+  .cat-legal{background:#001025;color:#6AABEE}
+  .cat-meals{background:#251800;color:#FFCA55}
+  .cat-office{background:#001525;color:#55C5F5}
+  .cat-rent{background:#160035;color:#C87FF5}
+  .cat-repairs{background:#250A00;color:#FF9055}
+  .cat-supplies{background:#001F18;color:#4DD5B5}
+  .cat-taxes{background:#250000;color:#FF7777}
+  .cat-travel{background:#00180A;color:#4DD58A}
+  .cat-utilities{background:#000E30;color:#7AABFF}
+  .cat-wages{background:#25002A;color:#FF80CC}
+  .cat-other{background:#1A1F27;color:#A0AABB}
+}
+:root[data-theme="dark"] .cat-advertising{background:#2A1500;color:#FF9055}
+:root[data-theme="dark"] .cat-car{background:#001535;color:#7AABFF}
+:root[data-theme="dark"] .cat-contract{background:#1A0035;color:#C4A0FF}
+:root[data-theme="dark"] .cat-insurance{background:#001A0C;color:#5CD690}
+:root[data-theme="dark"] .cat-legal{background:#001025;color:#6AABEE}
+:root[data-theme="dark"] .cat-meals{background:#251800;color:#FFCA55}
+:root[data-theme="dark"] .cat-office{background:#001525;color:#55C5F5}
+:root[data-theme="dark"] .cat-rent{background:#160035;color:#C87FF5}
+:root[data-theme="dark"] .cat-repairs{background:#250A00;color:#FF9055}
+:root[data-theme="dark"] .cat-supplies{background:#001F18;color:#4DD5B5}
+:root[data-theme="dark"] .cat-taxes{background:#250000;color:#FF7777}
+:root[data-theme="dark"] .cat-travel{background:#00180A;color:#4DD58A}
+:root[data-theme="dark"] .cat-utilities{background:#000E30;color:#7AABFF}
+:root[data-theme="dark"] .cat-wages{background:#25002A;color:#FF80CC}
+:root[data-theme="dark"] .cat-other{background:#1A1F27;color:#A0AABB}
+:root[data-theme="light"] .cat-advertising{background:#FFF0E6;color:#B84400}
+:root[data-theme="light"] .cat-car{background:#E6F0FF;color:#1845A0}
+:root[data-theme="light"] .cat-contract{background:#F0E6FF;color:#5B21B6}
+:root[data-theme="light"] .cat-insurance{background:#E6F7EC;color:#0A6B35}
+:root[data-theme="light"] .cat-legal{background:#E5EEF9;color:#0F3467}
+:root[data-theme="light"] .cat-meals{background:#FFF7E0;color:#8A5A00}
+:root[data-theme="light"] .cat-office{background:#E0F5FF;color:#0A5580}
+:root[data-theme="light"] .cat-rent{background:#F0E6FD;color:#5A1590}
+:root[data-theme="light"] .cat-repairs{background:#FFF0E8;color:#943300}
+:root[data-theme="light"] .cat-supplies{background:#E0FBF5;color:#0A6B55}
+:root[data-theme="light"] .cat-taxes{background:#FFEBEB;color:#991111}
+:root[data-theme="light"] .cat-travel{background:#E6F9EF;color:#0A5E2A}
+:root[data-theme="light"] .cat-utilities{background:#E6EEFF;color:#1B3FAB}
+:root[data-theme="light"] .cat-wages{background:#FDE8F4;color:#8C1550}
+:root[data-theme="light"] .cat-other{background:#F0F2F5;color:#475567}
 
-    /* ── Empty state ── */
-    .empty { text-align: center; padding: 48px 24px; color: var(--muted); }
-    .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
-    .empty p { font-size: .95rem; }
+/* ── Form ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+@media(max-width:640px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group.full{grid-column:1/-1}
+label{font-size:.7rem;font-weight:700;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.05em}
+input,select,textarea{padding:8px 10px;border:1px solid var(--border);
+  border-radius:var(--r);font-size:.875rem;color:var(--text);background:var(--card);
+  transition:border-color .12s,box-shadow .12s;font-family:inherit}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,112,204,.12)}
+textarea{resize:vertical;min-height:64px}
+.form-hint{font-size:.7rem;color:var(--muted);margin-top:2px}
+.form-actions{display:flex;gap:8px;margin-top:18px;
+              padding-top:18px;border-top:1px solid var(--border)}
 
-    /* ── Toast ── */
-    #toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #1e293b;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: var(--radius);
-      font-size: .875rem;
-      box-shadow: var(--shadow-md);
-      transform: translateY(80px);
-      opacity: 0;
-      transition: all .25s;
-      z-index: 999;
-    }
-    #toast.show { transform: translateY(0); opacity: 1; }
+/* ── Meals notice ── */
+.meals-chip{display:none;align-items:center;gap:4px;font-size:.7rem;color:#8A5A00;
+            background:#FFF7E0;border:1px solid #F5D878;border-radius:3px;
+            padding:3px 8px;margin-top:4px;width:fit-content}
+:root[data-theme="dark"] .meals-chip,:root:not([data-theme]) .meals-chip{
+  color:#FFCA55;background:#251800;border-color:#6B4F00}
+@media(prefers-color-scheme:dark){.meals-chip{color:#FFCA55;background:#251800;border-color:#6B4F00}}
 
-    /* ── Modal ── */
-    .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.4);
-      z-index: 500;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 24px;
-      max-width: 460px;
-      width: 90%;
-      box-shadow: var(--shadow-md);
-    }
-    .modal h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
-    .modal p { font-size: .9rem; color: var(--muted); margin-bottom: 20px; }
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+/* ── Table ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.835rem}
+th{text-align:left;padding:8px 11px;font-size:.67rem;font-weight:700;
+   text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+   border-bottom:2px solid var(--border);cursor:pointer;user-select:none;
+   white-space:nowrap;background:var(--card)}
+th:hover{color:var(--text)}
+th .si{margin-left:3px;opacity:.35;font-size:.68rem}
+th.sorted .si{opacity:1;color:var(--blue)}
+td{padding:9px 11px;border-bottom:1px solid var(--border);
+   vertical-align:middle;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg)}
 
-    .amount-positive { color: var(--danger); font-weight: 600; }
+/* ── Filters ── */
+.filters{display:flex;flex-wrap:wrap;gap:9px;padding:14px 18px;
+         background:var(--card);border:1px solid var(--border);
+         border-radius:var(--r) var(--r) 0 0;border-bottom:none;align-items:flex-end}
+.filters .form-group{flex:1;min-width:120px}
+.filter-bar{background:var(--card);border:1px solid var(--border);
+            border-top:1px solid var(--border);padding:7px 18px;
+            font-size:.75rem;color:var(--muted);
+            border-radius:0;display:flex;justify-content:space-between;align-items:center}
 
-    /* ── YTD filter bar ── */
-    .period-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
-    .period-tab {
-      padding: 6px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      cursor: pointer;
-      font-size: .82rem;
-      font-weight: 500;
-      color: var(--muted);
-      transition: all .15s;
-    }
-    .period-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+/* ── Empty ── */
+.empty{text-align:center;padding:36px 18px;color:var(--muted)}
+.empty-icon{font-size:1.8rem;margin-bottom:9px}
+.empty p{font-size:.88rem}
 
-    /* ── Receipt indicator ── */
-    .receipt-yes { color: var(--success); font-size: .8rem; }
-    .receipt-no  { color: var(--border);  font-size: .8rem; }
+/* ── Toast ── */
+#toast{position:fixed;bottom:18px;right:18px;background:#18212E;color:#fff;
+       padding:9px 15px;border-radius:var(--r);font-size:.8rem;font-weight:500;
+       box-shadow:var(--sh-md);transform:translateY(60px);opacity:0;
+       transition:all .2s;z-index:999}
+#toast.show{transform:translateY(0);opacity:1}
 
-    /* ── Photo upload ── */
-    .photo-drop {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
-      background: #fafbfc;
-      position: relative;
-    }
-    .photo-drop:hover, .photo-drop.drag-over { border-color: var(--primary); background: #eff6ff; }
-    .photo-drop input[type="file"] { display: none; }
-    .photo-drop-label { font-size: .85rem; color: var(--muted); pointer-events: none; }
-    .photo-drop-label strong { color: var(--primary); }
+/* ── Modal ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+               z-index:500;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:var(--r);padding:22px;
+       max-width:400px;width:92%;box-shadow:var(--sh-md)}
+.modal h3{font-size:.92rem;font-weight:700;margin-bottom:7px}
+.modal p{font-size:.83rem;color:var(--muted);margin-bottom:18px;line-height:1.5}
+.modal-actions{display:flex;gap:7px;justify-content:flex-end}
 
-    .photo-preview-wrap { margin-top: 12px; position: relative; display: inline-block; }
-    .photo-preview-wrap img {
-      max-width: 100%; max-height: 220px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      display: block;
-    }
-    .photo-remove-btn {
-      position: absolute; top: -8px; right: -8px;
-      background: var(--danger); color: #fff;
-      border: none; border-radius: 50%;
-      width: 22px; height: 22px;
-      font-size: .75rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      line-height: 1;
-    }
+/* ── Amount ── */
+.amt-exp{color:var(--danger);font-weight:700;font-variant-numeric:tabular-nums}
 
-    /* ── Photo thumbnail in table ── */
-    .photo-thumb {
-      width: 40px; height: 40px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: transform .15s;
-      display: block;
-    }
-    .photo-thumb:hover { transform: scale(1.1); }
+/* ── Photo ── */
+.photo-drop{border:1.5px dashed var(--border);border-radius:var(--r);padding:16px;
+            text-align:center;cursor:pointer;transition:border-color .15s,background .15s;
+            background:var(--bg)}
+.photo-drop:hover,.photo-drop.drag-over{border-color:var(--blue);background:rgba(0,112,204,.04)}
+.photo-drop input[type="file"]{display:none}
+.drop-lbl{font-size:.8rem;color:var(--muted);pointer-events:none}
+.drop-lbl strong{color:var(--blue)}
+.photo-prev-wrap{margin-top:9px;position:relative;display:inline-block}
+.photo-prev-wrap img{max-width:100%;max-height:190px;border-radius:4px;
+                     border:1px solid var(--border);display:block}
+.photo-rm{position:absolute;top:-7px;right:-7px;background:var(--danger);color:#fff;
+          border:none;border-radius:50%;width:20px;height:20px;font-size:.68rem;
+          cursor:pointer;display:flex;align-items:center;justify-content:center}
+.photo-thumb{width:34px;height:34px;object-fit:cover;border-radius:3px;
+             border:1px solid var(--border);cursor:pointer;
+             transition:transform .15s;display:block}
+.photo-thumb:hover{transform:scale(1.12)}
 
-    /* ── Photo lightbox ── */
-    #photo-lightbox {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.85);
-      z-index: 600;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 16px;
-    }
-    #photo-lightbox.open { display: flex; }
-    #photo-lightbox img {
-      max-width: 92vw; max-height: 82vh;
-      border-radius: var(--radius);
-      box-shadow: 0 8px 32px rgba(0,0,0,.5);
-    }
-    #photo-lightbox-caption { color: #fff; font-size: .9rem; opacity: .8; }
-    #photo-lightbox-close {
-      position: fixed; top: 20px; right: 20px;
-      background: rgba(255,255,255,.15);
-      border: none; color: #fff;
-      width: 40px; height: 40px; border-radius: 50%;
-      font-size: 1.2rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-    }
-    #photo-lightbox-close:hover { background: rgba(255,255,255,.3); }
-    #photo-lightbox-download {
-      background: var(--primary); color: #fff;
-      border: none; padding: 8px 18px;
-      border-radius: 6px; cursor: pointer;
-      font-size: .85rem; font-weight: 500;
-    }
+/* ── Lightbox ── */
+#lbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;
+      align-items:center;justify-content:center;flex-direction:column;gap:12px}
+#lbox.open{display:flex}
+#lbox img{max-width:90vw;max-height:80vh;border-radius:var(--r);
+          box-shadow:0 8px 32px rgba(0,0,0,.5)}
+#lbox-cap{color:rgba(255,255,255,.65);font-size:.82rem}
+#lbox-close{position:fixed;top:16px;right:16px;background:rgba(255,255,255,.12);
+            border:none;color:#fff;width:36px;height:36px;border-radius:50%;
+            font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#lbox-close:hover{background:rgba(255,255,255,.25)}
+#lbox-dl{background:var(--green);color:#fff;border:none;padding:6px 14px;
+         border-radius:var(--r);cursor:pointer;font-size:.8rem;font-weight:600}
 
-    @media print {
-      nav, header button, .form-actions, .filters button, #toast { display: none !important; }
-      body { background: #fff; }
-    }
-  </style>
+/* ── Receipt ── */
+.rc-y{color:var(--green);font-size:.73rem;font-weight:700}
+.rc-n{color:var(--border);font-size:.73rem}
+
+/* ── Section header ── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-ttl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+
+/* ── Mobile ── */
+.mob-toggle{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:3px}
+@media(max-width:768px){
+  .mob-toggle{display:flex}
+  .sidebar{transform:translateX(-220px);transition:transform .2s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .pl-stats{gap:16px;flex-wrap:wrap}
+}
+
+@media print{
+  .sidebar,.topbar .btn,.form-actions,#toast,.filters .btn{display:none!important}
+  .main{margin-left:0}
+  body{background:#fff}
+}
+</style>
 </head>
 <body>
 
-<header>
-  <h1>LLC Expense Tracker</h1>
-  <span id="llc-name-display"></span>
-</header>
-
-<nav>
-  <button class="active" data-view="dashboard">Dashboard</button>
-  <button data-view="add">+ Add Expense</button>
-  <button data-view="expenses">Expenses</button>
-  <button data-view="reports">Reports</button>
-  <button data-view="settings">Settings</button>
-</nav>
-
-<main>
-
-  <!-- DASHBOARD -->
-  <div class="view active" id="view-dashboard">
-    <div class="period-tabs" id="period-tabs">
-      <button class="period-tab active" data-period="thisMonth">This Month</button>
-      <button class="period-tab" data-period="lastMonth">Last Month</button>
-      <button class="period-tab" data-period="ytd">Year to Date</button>
-      <button class="period-tab" data-period="all">All Time</button>
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">$</div>
+    <div>
+      <div class="sb-name" id="brand-name">Solopreneur</div>
+      <div class="sb-sub">Expense Tracker</div>
     </div>
+  </div>
+  <nav class="sb-nav">
+    <button class="nav-btn active" data-view="dashboard">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor">
+        <rect x="1" y="1" width="5.5" height="5.5" rx="1"/>
+        <rect x="8.5" y="1" width="5.5" height="5.5" rx="1"/>
+        <rect x="1" y="8.5" width="5.5" height="5.5" rx="1"/>
+        <rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1"/>
+      </svg>
+      Dashboard
+    </button>
 
-    <div class="tiles">
-      <div class="tile">
-        <div class="tile-label">Total Expenses</div>
-        <div class="tile-value danger" id="dash-total">$0.00</div>
-        <div class="tile-sub" id="dash-count">0 transactions</div>
-      </div>
-      <div class="tile">
-        <div class="tile-label">Largest Expense</div>
-        <div class="tile-value" id="dash-largest">$0.00</div>
-        <div class="tile-sub" id="dash-largest-cat">—</div>
-      </div>
-      <div class="tile">
-        <div class="tile-label">Avg per Transaction</div>
-        <div class="tile-value" id="dash-avg">$0.00</div>
-        <div class="tile-sub" id="dash-period-label">—</div>
-      </div>
-      <div class="tile">
-        <div class="tile-label">Top Category</div>
-        <div class="tile-value" style="font-size:1.1rem" id="dash-top-cat">—</div>
-        <div class="tile-sub" id="dash-top-cat-amt">—</div>
-      </div>
+    <div class="sb-section">Money</div>
+    <button class="nav-btn" data-view="expenses">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M1.5 3.5h12M1.5 7.5h8M1.5 11.5h5"/>
+      </svg>
+      Transactions
+    </button>
+
+    <div class="sb-section">Taxes</div>
+    <button class="nav-btn" data-view="reports">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M1.5 13L5.5 8l3 3 5-7"/>
+      </svg>
+      Schedule C
+    </button>
+
+    <div class="sb-spacer"></div>
+    <div class="sb-footer">
+      <button class="nav-btn" data-view="settings">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor">
+          <path fill-rule="evenodd" d="M6.268 1.25a.75.75 0 00-.745.665l-.116.934a4.75 4.75 0 00-1.05.606l-.87-.406a.75.75 0 00-.938.252l-.75 1.3a.75.75 0 00.173.995l.762.558a4.82 4.82 0 000 1.692l-.762.558a.75.75 0 00-.173.995l.75 1.3a.75.75 0 00.938.252l.87-.406c.33.234.683.437 1.05.606l.116.934a.75.75 0 00.745.665h1.464a.75.75 0 00.745-.665l.116-.934a4.75 4.75 0 001.05-.606l.87.406a.75.75 0 00.938-.252l.75-1.3a.75.75 0 00-.173-.995l-.762-.558a4.82 4.82 0 000-1.692l.762-.558a.75.75 0 00.173-.995l-.75-1.3a.75.75 0 00-.938-.252l-.87.406a4.75 4.75 0 00-1.05-.606l-.116-.934a.75.75 0 00-.745-.665H6.268zM7 9.5a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+        </svg>
+        Settings
+      </button>
     </div>
+  </nav>
+</aside>
 
-    <div class="card">
-      <h2>Spending by Category</h2>
-      <div class="cat-list" id="dash-cat-list">
-        <div class="empty"><div class="empty-icon">📊</div><p>No expenses yet for this period.</p></div>
-      </div>
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="mob-toggle" id="mob-toggle" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M2 4.5h14M2 9h14M2 13.5h14"/>
+        </svg>
+      </button>
+      <span class="topbar-title" id="topbar-title">Dashboard</span>
     </div>
-
-    <div class="card">
-      <h2>Recent Expenses</h2>
-      <div class="table-wrap">
-        <table id="dash-recent-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Vendor</th>
-              <th>Category</th>
-              <th>Description</th>
-              <th style="text-align:right">Amount</th>
-            </tr>
-          </thead>
-          <tbody id="dash-recent-body">
-            <tr><td colspan="5"><div class="empty"><p>No recent expenses.</p></div></td></tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="topbar-r">
+      <span class="company-chip" id="llc-name-display"></span>
+      <button class="btn btn-green" onclick="resetForm();showView('add')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5.5 1v9M1 5.5h9"/></svg>
+        Add Expense
+      </button>
     </div>
   </div>
 
-  <!-- ADD EXPENSE -->
-  <div class="view" id="view-add">
-    <div class="card">
-      <h2 id="add-form-title">Add New Expense</h2>
-      <form id="expense-form" autocomplete="off">
-        <input type="hidden" id="edit-id" />
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="f-date">Date *</label>
-            <input type="date" id="f-date" required />
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="period-wrap">
+        <button class="ptab active" data-period="thisMonth">This Month</button>
+        <button class="ptab" data-period="lastMonth">Last Month</button>
+        <button class="ptab" data-period="ytd">Year to Date</button>
+        <button class="ptab" data-period="all">All Time</button>
+      </div>
+
+      <div class="pl-banner">
+        <div class="pl-main">
+          <div class="pl-lbl">Total Business Expenses</div>
+          <div class="pl-amt" id="dash-total">$0.00</div>
+          <div class="pl-sub" id="dash-sub">0 transactions this month</div>
+        </div>
+        <div class="pl-stats">
+          <div class="pl-stat"><div class="ps-lbl">Tax Deductible</div><div class="ps-val g" id="dash-ded">$0.00</div></div>
+          <div class="pl-stat"><div class="ps-lbl">Non-Deductible</div><div class="ps-val" id="dash-nded">$0.00</div></div>
+          <div class="pl-stat"><div class="ps-lbl">Avg / Transaction</div><div class="ps-val" id="dash-avg">$0.00</div></div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <div class="sec-hdr">
+            <div class="sec-ttl">Schedule C Breakdown</div>
+            <span style="font-size:.7rem;color:var(--muted)" id="dash-cat-note"></span>
           </div>
-          <div class="form-group">
-            <label for="f-amount">Amount ($) *</label>
-            <input type="number" id="f-amount" min="0.01" step="0.01" placeholder="0.00" required />
+          <div class="cat-list" id="dash-cats">
+            <div class="empty"><div class="empty-icon">📊</div><p>No expenses yet.</p></div>
           </div>
-          <div class="form-group">
-            <label for="f-vendor">Vendor / Payee *</label>
-            <input type="text" id="f-vendor" placeholder="e.g. Amazon, Zoom…" required />
+        </div>
+        <div class="card">
+          <div class="sec-hdr"><div class="sec-ttl">Top Expenses</div></div>
+          <div id="dash-top">
+            <div class="empty"><p>No expenses yet.</p></div>
           </div>
-          <div class="form-group">
-            <label for="f-category">Category *</label>
-            <select id="f-category" required>
-              <option value="">Select category…</option>
-              <option value="Office Supplies">Office Supplies</option>
-              <option value="Software & Subscriptions">Software &amp; Subscriptions</option>
-              <option value="Marketing & Advertising">Marketing &amp; Advertising</option>
-              <option value="Travel">Travel</option>
-              <option value="Meals & Entertainment">Meals &amp; Entertainment</option>
-              <option value="Professional Services">Professional Services</option>
-              <option value="Utilities">Utilities</option>
-              <option value="Insurance">Insurance</option>
-              <option value="Equipment">Equipment</option>
-              <option value="Payroll">Payroll</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="f-payment">Payment Method</label>
-            <select id="f-payment">
-              <option value="Credit Card">Credit Card</option>
-              <option value="Debit Card">Debit Card</option>
-              <option value="Bank Transfer">Bank Transfer</option>
-              <option value="Check">Check</option>
-              <option value="Cash">Cash</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="f-receipt">Receipt</label>
-            <select id="f-receipt">
-              <option value="yes">Yes — have receipt</option>
-              <option value="no">No — missing receipt</option>
-              <option value="digital">Digital receipt</option>
-            </select>
-          </div>
-          <div class="form-group full">
-            <label>Receipt Photo</label>
-            <div class="photo-drop" id="photo-drop" onclick="document.getElementById('f-photo').click()">
-              <input type="file" id="f-photo" accept="image/*" capture="environment" />
-              <div class="photo-drop-label">
-                📷 <strong>Click to upload</strong> or drag &amp; drop a photo<br />
-                <span style="font-size:.78rem">JPG, PNG, HEIC — auto-compressed</span>
-              </div>
-              <div id="photo-preview-wrap" class="photo-preview-wrap" style="display:none">
-                <img id="photo-preview-img" src="" alt="Receipt preview" />
-                <button type="button" class="photo-remove-btn" id="photo-remove-btn" onclick="removePhoto(event)">✕</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec-hdr">
+          <div class="sec-ttl">Recent Transactions</div>
+          <button class="btn-link" onclick="showView('expenses')">View all →</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Date</th><th>Vendor</th><th>Category</th><th>Notes</th>
+              <th style="text-align:right">Amount</th>
+            </tr></thead>
+            <tbody id="dash-recent">
+              <tr><td colspan="5"><div class="empty"><p>No recent transactions.</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD EXPENSE -->
+    <div class="view" id="view-add">
+      <div class="card" style="max-width:740px">
+        <h2 id="form-title" style="font-size:.95rem;font-weight:700;margin-bottom:18px">New Expense</h2>
+        <form id="expense-form" autocomplete="off">
+          <input type="hidden" id="edit-id"/>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="f-date">Date</label>
+              <input type="date" id="f-date" required/>
+            </div>
+            <div class="form-group">
+              <label for="f-amount">Amount ($)</label>
+              <input type="number" id="f-amount" min="0.01" step="0.01" placeholder="0.00" required/>
+            </div>
+            <div class="form-group">
+              <label for="f-vendor">Vendor / Payee</label>
+              <input type="text" id="f-vendor" placeholder="e.g. Amazon, WeWork…" required/>
+            </div>
+            <div class="form-group">
+              <label for="f-category">Schedule C Category</label>
+              <select id="f-category" required>
+                <option value="">Select category…</option>
+                <option value="Advertising">Advertising</option>
+                <option value="Car & Truck">Car &amp; Truck</option>
+                <option value="Contract Labor">Contract Labor</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Legal & Professional">Legal &amp; Professional</option>
+                <option value="Meals">Meals (50% deductible)</option>
+                <option value="Office Expense">Office Expense</option>
+                <option value="Rent or Lease">Rent or Lease</option>
+                <option value="Repairs & Maintenance">Repairs &amp; Maintenance</option>
+                <option value="Supplies">Supplies</option>
+                <option value="Taxes & Licenses">Taxes &amp; Licenses</option>
+                <option value="Travel">Travel</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Wages">Wages</option>
+                <option value="Other Expenses">Other Expenses</option>
+              </select>
+              <div class="meals-chip" id="meals-note">⚠ IRS allows only 50% deduction for meals</div>
+            </div>
+            <div class="form-group">
+              <label for="f-payment">Payment Method</label>
+              <select id="f-payment">
+                <option value="Credit Card">Credit Card</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Check">Check</option>
+                <option value="Cash">Cash</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-receipt">Receipt Status</label>
+              <select id="f-receipt">
+                <option value="yes">Have receipt</option>
+                <option value="digital">Digital receipt</option>
+                <option value="no">Missing receipt</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Receipt Photo</label>
+              <div class="photo-drop" id="photo-drop" onclick="document.getElementById('f-photo').click()">
+                <input type="file" id="f-photo" accept="image/*" capture="environment"/>
+                <div class="drop-lbl">
+                  📷 <strong>Click to upload</strong> or drag &amp; drop<br/>
+                  <span style="font-size:.7rem">JPG, PNG, HEIC — auto-compressed before saving</span>
+                </div>
+                <div id="photo-prev-wrap" class="photo-prev-wrap" style="display:none">
+                  <img id="photo-prev-img" src="" alt="Receipt"/>
+                  <button type="button" class="photo-rm" onclick="removePhoto(event)">✕</button>
+                </div>
               </div>
             </div>
+            <div class="form-group full">
+              <label for="f-desc">Notes</label>
+              <textarea id="f-desc" placeholder="Purpose, project, client…"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="f-taxded">Tax Deductible?</label>
+              <select id="f-taxded">
+                <option value="yes">Yes — fully deductible</option>
+                <option value="partial">Partial</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-pct">Deductible %</label>
+              <input type="number" id="f-pct" min="1" max="99" value="100"/>
+              <span class="form-hint">Only needed for partial (e.g. 50% for meals)</span>
+            </div>
           </div>
-          <div class="form-group full">
-            <label for="f-description">Description / Notes</label>
-            <textarea id="f-description" placeholder="What was this expense for?"></textarea>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-green" id="form-btn">Save Expense</button>
+            <button type="button" class="btn btn-ghost" id="form-cancel">Cancel</button>
           </div>
-          <div class="form-group">
-            <label for="f-taxdeductible">Tax Deductible?</label>
-            <select id="f-taxdeductible">
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-              <option value="partial">Partially</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="f-deductpct">Deductible % (if partial)</label>
-            <input type="number" id="f-deductpct" min="1" max="99" placeholder="50" value="100" />
-          </div>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" id="form-submit-btn">Save Expense</button>
-          <button type="button" class="btn btn-outline" id="form-cancel-btn">Cancel</button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- EXPENSES LIST -->
-  <div class="view" id="view-expenses">
-    <div class="card" style="padding-bottom: 8px;">
+    <!-- TRANSACTIONS -->
+    <div class="view" id="view-expenses">
       <div class="filters">
-        <div class="form-group">
-          <label>Search</label>
-          <input type="text" id="filter-search" placeholder="Vendor, description…" />
-        </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select id="filter-cat">
+        <div class="form-group"><label>Search</label>
+          <input type="text" id="f-search" placeholder="Vendor, notes…"/></div>
+        <div class="form-group"><label>Category</label>
+          <select id="f-cat">
             <option value="">All categories</option>
-            <option>Office Supplies</option>
-            <option>Software &amp; Subscriptions</option>
-            <option>Marketing &amp; Advertising</option>
-            <option>Travel</option>
-            <option>Meals &amp; Entertainment</option>
-            <option>Professional Services</option>
-            <option>Utilities</option>
-            <option>Insurance</option>
-            <option>Equipment</option>
-            <option>Payroll</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>From</label>
-          <input type="date" id="filter-from" />
-        </div>
-        <div class="form-group">
-          <label>To</label>
-          <input type="date" id="filter-to" />
-        </div>
-        <div class="form-group">
-          <label>Payment</label>
-          <select id="filter-payment">
+            <option>Advertising</option><option>Car &amp; Truck</option>
+            <option>Contract Labor</option><option>Insurance</option>
+            <option>Legal &amp; Professional</option><option>Meals</option>
+            <option>Office Expense</option><option>Rent or Lease</option>
+            <option>Repairs &amp; Maintenance</option><option>Supplies</option>
+            <option>Taxes &amp; Licenses</option><option>Travel</option>
+            <option>Utilities</option><option>Wages</option><option>Other Expenses</option>
+          </select></div>
+        <div class="form-group"><label>From</label><input type="date" id="f-from"/></div>
+        <div class="form-group"><label>To</label><input type="date" id="f-to"/></div>
+        <div class="form-group"><label>Payment</label>
+          <select id="f-pay">
             <option value="">All methods</option>
-            <option>Credit Card</option>
-            <option>Debit Card</option>
-            <option>Bank Transfer</option>
-            <option>Check</option>
-            <option>Cash</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div style="display:flex;gap:8px;align-items:flex-end">
-          <button class="btn btn-outline btn-sm" id="filter-clear">Clear</button>
-          <button class="btn btn-success btn-sm" id="export-csv">Export CSV</button>
+            <option>Credit Card</option><option>Debit Card</option>
+            <option>Bank Transfer</option><option>Check</option>
+            <option>Cash</option><option>Other</option>
+          </select></div>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <button class="btn btn-ghost btn-sm" id="btn-clear">Clear</button>
+          <button class="btn btn-green btn-sm" id="btn-csv">↓ CSV</button>
         </div>
       </div>
-      <div style="font-size:.82rem;color:var(--muted);margin-bottom:12px">
-        Showing <strong id="filter-count">0</strong> expense(s) — Total: <strong id="filter-total">$0.00</strong>
+      <div class="filter-bar">
+        <span>Showing <strong id="f-count">0</strong> transaction(s) — Total: <strong id="f-total">$0.00</strong></span>
       </div>
-    </div>
-
-    <div class="card" style="padding:0">
-      <div class="table-wrap">
-        <table id="expenses-table">
-          <thead>
-            <tr>
-              <th data-sort="date">Date <span class="sort-icon">↕</span></th>
-              <th data-sort="vendor">Vendor <span class="sort-icon">↕</span></th>
-              <th data-sort="category">Category <span class="sort-icon">↕</span></th>
-              <th>Description</th>
-              <th data-sort="payment">Payment <span class="sort-icon">↕</span></th>
+      <div class="card" style="padding:0;border-top:none;border-radius:0 0 var(--r) var(--r)">
+        <div class="table-wrap">
+          <table id="exp-table">
+            <thead><tr>
+              <th data-sort="date">Date <span class="si">↕</span></th>
+              <th data-sort="vendor">Vendor <span class="si">↕</span></th>
+              <th data-sort="category">Category <span class="si">↕</span></th>
+              <th>Notes</th>
+              <th data-sort="payment">Payment <span class="si">↕</span></th>
               <th>Receipt</th>
               <th style="text-align:center">Photo</th>
-              <th data-sort="amount" style="text-align:right">Amount <span class="sort-icon">↕</span></th>
+              <th data-sort="amount" style="text-align:right">Amount <span class="si">↕</span></th>
               <th style="text-align:center">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="expenses-body">
-            <tr><td colspan="9"><div class="empty"><div class="empty-icon">🧾</div><p>No expenses yet. <a href="#" id="add-first-link">Add your first one!</a></p></div></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- REPORTS -->
-  <div class="view" id="view-reports">
-    <div class="card">
-      <h2>Annual Report</h2>
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
-        <div class="form-group" style="flex:0 0 auto">
-          <label>Year</label>
-          <select id="report-year" style="width:110px"></select>
+            </tr></thead>
+            <tbody id="exp-body">
+              <tr><td colspan="9"><div class="empty"><div class="empty-icon">🧾</div>
+                <p>No expenses yet. <a href="#" id="add-first" style="color:var(--blue)">Add your first one!</a></p>
+              </div></td></tr>
+            </tbody>
+          </table>
         </div>
-        <div style="display:flex;gap:8px;margin-top:18px">
-          <button class="btn btn-outline btn-sm" onclick="printReport()">Print / Save PDF</button>
-          <button class="btn btn-success btn-sm" id="report-export-csv">Export Year CSV</button>
-        </div>
-      </div>
-
-      <div class="tiles" id="report-tiles" style="margin-bottom:24px"></div>
-
-      <h2 style="margin-bottom:16px">Monthly Breakdown</h2>
-      <div class="table-wrap" style="margin-bottom:24px">
-        <table id="report-monthly-table">
-          <thead>
-            <tr>
-              <th>Month</th>
-              <th style="text-align:right">Amount</th>
-              <th style="text-align:right">Transactions</th>
-              <th style="text-align:right">Tax Deductible</th>
-            </tr>
-          </thead>
-          <tbody id="report-monthly-body"></tbody>
-        </table>
-      </div>
-
-      <h2 style="margin-bottom:16px">By Category</h2>
-      <div class="table-wrap">
-        <table id="report-cat-table">
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th style="text-align:right">Amount</th>
-              <th style="text-align:right">Transactions</th>
-              <th style="text-align:right">% of Total</th>
-              <th style="text-align:right">Tax Deductible</th>
-            </tr>
-          </thead>
-          <tbody id="report-cat-body"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- SETTINGS -->
-  <div class="view" id="view-settings">
-    <div class="card">
-      <h2>Company Settings</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="s-llcname">LLC Name</label>
-          <input type="text" id="s-llcname" placeholder="My Company LLC" />
-        </div>
-        <div class="form-group">
-          <label for="s-ein">EIN (optional)</label>
-          <input type="text" id="s-ein" placeholder="XX-XXXXXXX" />
-        </div>
-        <div class="form-group">
-          <label for="s-fiscal">Fiscal Year Start</label>
-          <select id="s-fiscal">
-            <option value="01">January</option>
-            <option value="04">April</option>
-            <option value="07">July</option>
-            <option value="10">October</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="s-currency">Currency Symbol</label>
-          <input type="text" id="s-currency" value="$" maxlength="3" style="width:80px" />
-        </div>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Data Management</h2>
-      <p style="font-size:.875rem;color:var(--muted);margin-bottom:16px">
-        All data is stored locally in your browser. Export regularly to keep backups.
-      </p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn btn-outline" id="export-json-btn">Export Backup (JSON)</button>
-        <button class="btn btn-outline" id="import-json-btn">Import Backup (JSON)</button>
-        <button class="btn btn-danger" id="clear-data-btn">Clear All Data</button>
+    <!-- SCHEDULE C REPORT -->
+    <div class="view" id="view-reports">
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+          <div>
+            <h2 style="font-size:.95rem;font-weight:700;margin-bottom:3px">Schedule C Report</h2>
+            <p style="font-size:.75rem;color:var(--muted)">IRS Schedule C — Profit or Loss From Business</p>
+          </div>
+          <div style="display:flex;gap:7px;align-items:flex-end;flex-wrap:wrap">
+            <div class="form-group"><label>Tax Year</label>
+              <select id="rep-year" style="width:96px"></select></div>
+            <button class="btn btn-ghost btn-sm" onclick="window.print()">Print</button>
+            <button class="btn btn-green btn-sm" id="rep-csv">↓ CSV</button>
+          </div>
+        </div>
+        <div class="tiles" id="rep-tiles" style="margin-bottom:22px"></div>
+        <div class="sec-hdr" style="margin-bottom:10px"><div class="sec-ttl">Monthly Breakdown</div></div>
+        <div class="table-wrap" style="margin-bottom:22px">
+          <table><thead><tr>
+            <th>Month</th>
+            <th style="text-align:right">Total</th>
+            <th style="text-align:right">Transactions</th>
+            <th style="text-align:right">Tax Deductible</th>
+          </tr></thead><tbody id="rep-monthly"></tbody></table>
+        </div>
+        <div class="sec-hdr" style="margin-bottom:10px"><div class="sec-ttl">By Schedule C Category</div></div>
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th>Category</th>
+            <th style="text-align:right">Total</th>
+            <th style="text-align:right">Transactions</th>
+            <th style="text-align:right">% of Total</th>
+            <th style="text-align:right">Tax Deductible</th>
+          </tr></thead><tbody id="rep-cats"></tbody></table>
+        </div>
       </div>
-      <input type="file" id="import-file-input" accept=".json" style="display:none" />
     </div>
 
-    <div class="card">
-      <h2>About</h2>
-      <p style="font-size:.875rem;color:var(--muted);line-height:1.6">
-        LLC Expense Tracker stores all data in your browser's local storage.
-        No data is sent to any server. Export your data regularly as a backup.
-        Use the CSV export for importing into spreadsheet software or your accountant's system.
-      </p>
+    <!-- SETTINGS -->
+    <div class="view" id="view-settings">
+      <div class="card" style="max-width:580px">
+        <h2 style="font-size:.95rem;font-weight:700;margin-bottom:16px">Business Settings</h2>
+        <div class="form-grid">
+          <div class="form-group"><label for="s-name">Business Name</label>
+            <input type="text" id="s-name" placeholder="My LLC"/></div>
+          <div class="form-group"><label for="s-ein">EIN (optional)</label>
+            <input type="text" id="s-ein" placeholder="XX-XXXXXXX"/></div>
+          <div class="form-group"><label for="s-fiscal">Fiscal Year Start</label>
+            <select id="s-fiscal">
+              <option value="01">January</option><option value="04">April</option>
+              <option value="07">July</option><option value="10">October</option>
+            </select></div>
+          <div class="form-group"><label for="s-cur">Currency Symbol</label>
+            <input type="text" id="s-cur" value="$" maxlength="3" style="width:72px"/></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-green" id="btn-save-settings">Save Settings</button>
+        </div>
+      </div>
+      <div class="card" style="max-width:580px">
+        <h2 style="font-size:.95rem;font-weight:700;margin-bottom:8px">Data Management</h2>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:13px;line-height:1.6">
+          All data lives in your browser's local storage — nothing is sent to any server.
+          Export a backup regularly.
+        </p>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn btn-ghost" id="btn-exp-json">Export Backup</button>
+          <button class="btn btn-ghost" id="btn-imp-json">Import Backup</button>
+          <button class="btn btn-danger" id="btn-clear-all">Clear All Data</button>
+        </div>
+        <input type="file" id="imp-file" accept=".json" style="display:none"/>
+      </div>
     </div>
-  </div>
 
-</main>
+  </div><!-- /content -->
+</div><!-- /main -->
 
 <!-- Photo lightbox -->
-<div id="photo-lightbox">
-  <button id="photo-lightbox-close" onclick="closePhotoLightbox()">✕</button>
-  <img id="photo-lightbox-img" src="" alt="Receipt photo" />
-  <div style="display:flex;gap:12px;align-items:center">
-    <div id="photo-lightbox-caption"></div>
-    <button id="photo-lightbox-download" onclick="downloadLightboxPhoto()">Download</button>
+<div id="lbox">
+  <button id="lbox-close" onclick="closeLbox()">✕</button>
+  <img id="lbox-img" src="" alt="Receipt"/>
+  <div style="display:flex;gap:10px;align-items:center">
+    <div id="lbox-cap"></div>
+    <button id="lbox-dl" onclick="dlLbox()">Download</button>
   </div>
 </div>
 
-<!-- Delete confirmation modal -->
-<div class="modal-overlay" id="delete-modal">
+<!-- Delete modal -->
+<div class="modal-overlay" id="del-modal">
   <div class="modal">
     <h3>Delete Expense?</h3>
-    <p>This action cannot be undone. The expense record will be permanently removed.</p>
+    <p>This will permanently remove the record and cannot be undone.</p>
     <div class="modal-actions">
-      <button class="btn btn-outline" id="delete-cancel">Cancel</button>
-      <button class="btn btn-danger" id="delete-confirm">Delete</button>
+      <button class="btn btn-ghost" id="del-cancel">Cancel</button>
+      <button class="btn btn-danger" id="del-confirm">Delete</button>
     </div>
   </div>
 </div>
@@ -733,727 +733,414 @@
 <div id="toast"></div>
 
 <script>
-/* ══════════════════════════════════════════════
-   Data Layer
-══════════════════════════════════════════════ */
-const STORAGE_KEY = 'llc_expenses';
-const SETTINGS_KEY = 'llc_settings';
+/* ── Storage ── */
+const SK='llc_expenses',SK2='llc_settings';
+const loadExp=()=>{try{return JSON.parse(localStorage.getItem(SK)||'[]')}catch{return[]}};
+const saveExp=a=>localStorage.setItem(SK,JSON.stringify(a));
+const loadSet=()=>{try{return JSON.parse(localStorage.getItem(SK2)||'{}')}catch{return{}}};
+const saveSet=o=>localStorage.setItem(SK2,JSON.stringify(o));
+const genId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
-function loadExpenses() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-  catch { return []; }
+/* ── Helpers ── */
+let cfg=loadSet();
+const $=id=>document.getElementById(id);
+const cur=n=>(cfg.currency||'$')+Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const CAT_MAP={
+  'Advertising':'advertising','Car & Truck':'car','Contract Labor':'contract',
+  'Insurance':'insurance','Legal & Professional':'legal','Meals':'meals',
+  'Office Expense':'office','Rent or Lease':'rent','Repairs & Maintenance':'repairs',
+  'Supplies':'supplies','Taxes & Licenses':'taxes','Travel':'travel',
+  'Utilities':'utilities','Wages':'wages','Other Expenses':'other'
+};
+const catCls=c=>'cat-'+(CAT_MAP[c]||'other');
+
+const toast=msg=>{const el=$('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800)};
+const today=()=>new Date().toISOString().slice(0,10);
+const parseD=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const fmtD=s=>{if(!s)return'—';const[y,m,d]=s.split('-');return`${MONTHS[+m-1]} ${+d}, ${y}`};
+const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
+
+function dedAmt(e){
+  if(e.taxDeductible==='no')return 0;
+  if(e.taxDeductible==='partial')return e.amount*(parseFloat(e.deductPct)||50)/100;
+  if(e.category==='Meals')return e.amount*0.5;
+  return e.amount;
 }
 
-function saveExpenses(arr) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+/* ── Nav ── */
+const TITLES={dashboard:'Dashboard',add:'New Expense',expenses:'Transactions',reports:'Schedule C',settings:'Settings'};
+function showView(n){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+n));
+  document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===n));
+  $('topbar-title').textContent=TITLES[n]||n;
+  if(n==='dashboard')renderDash();
+  if(n==='expenses')renderExp();
+  if(n==='reports')renderRep();
+  if(n==='settings')loadSetForm();
+  $('sidebar').classList.remove('open');
 }
+document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+$('mob-toggle').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 
-function loadSettings() {
-  try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); }
-  catch { return {}; }
+/* ── Period ── */
+let period='thisMonth';
+function dateRange(p){
+  const n=new Date(),y=n.getFullYear(),m=n.getMonth();
+  if(p==='thisMonth')return[new Date(y,m,1),new Date(y,m+1,0)];
+  if(p==='lastMonth')return[new Date(y,m-1,1),new Date(y,m,0)];
+  if(p==='ytd')return[new Date(y,0,1),new Date(y,11,31)];
+  return[new Date(2000,0,1),new Date(2099,11,31)];
 }
+const filterPeriod=(exps,p)=>{const[f,t]=dateRange(p);return exps.filter(e=>{const d=parseD(e.date);return d>=f&&d<=t})};
+document.querySelectorAll('.ptab').forEach(b=>b.addEventListener('click',()=>{
+  period=b.dataset.period;
+  document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');renderDash();
+}));
 
-function saveSettings(obj) {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(obj));
-}
+/* ── Dashboard ── */
+function renderDash(){
+  const all=loadExp(),data=filterPeriod(all,period);
+  const total=data.reduce((s,e)=>s+e.amount,0);
+  const ded=data.reduce((s,e)=>s+dedAmt(e),0);
+  const cnt=data.length,avg=cnt?total/cnt:0;
+  $('dash-total').textContent=cur(total);
+  $('dash-ded').textContent=cur(ded);
+  $('dash-nded').textContent=cur(total-ded);
+  $('dash-avg').textContent=cur(avg);
+  const lbl={thisMonth:'this month',lastMonth:'last month',ytd:'year to date',all:'all time'}[period];
+  $('dash-sub').textContent=`${cnt} transaction${cnt!==1?'s':''} ${lbl}`;
+  $('dash-cat-note').textContent=cnt?`${cnt} transactions`:'';
 
-function genId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-}
-
-/* ══════════════════════════════════════════════
-   Helpers
-══════════════════════════════════════════════ */
-let settings = loadSettings();
-
-function currency(n) {
-  const sym = settings.currency || '$';
-  return sym + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-function catClass(cat) {
-  const map = {
-    'Office Supplies':'office','Software & Subscriptions':'software',
-    'Marketing & Advertising':'marketing','Travel':'travel',
-    'Meals & Entertainment':'meals','Professional Services':'professional',
-    'Utilities':'utilities','Insurance':'insurance','Equipment':'equipment',
-    'Payroll':'payroll','Other':'other'
-  };
-  return 'cat-' + (map[cat] || 'other');
-}
-
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2800);
-}
-
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function parseLocalDate(str) {
-  // parse YYYY-MM-DD without timezone shift
-  const [y, m, d] = str.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
-
-function deductibleAmount(exp) {
-  if (exp.taxDeductible === 'no') return 0;
-  if (exp.taxDeductible === 'partial') {
-    const pct = parseFloat(exp.deductPct) || 50;
-    return exp.amount * (pct / 100);
-  }
-  return exp.amount;
-}
-
-/* ══════════════════════════════════════════════
-   Navigation
-══════════════════════════════════════════════ */
-const views = document.querySelectorAll('.view');
-const navBtns = document.querySelectorAll('nav button');
-
-function showView(name) {
-  views.forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
-  navBtns.forEach(b => b.classList.toggle('active', b.dataset.view === name));
-  if (name === 'dashboard') renderDashboard();
-  if (name === 'expenses') renderExpenses();
-  if (name === 'reports') renderReports();
-  if (name === 'settings') loadSettingsForm();
-}
-
-navBtns.forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
-
-/* ══════════════════════════════════════════════
-   Period helpers
-══════════════════════════════════════════════ */
-let activePeriod = 'thisMonth';
-
-function getDateRange(period) {
-  const now = new Date();
-  const y = now.getFullYear(), m = now.getMonth();
-  if (period === 'thisMonth') return [new Date(y, m, 1), new Date(y, m + 1, 0)];
-  if (period === 'lastMonth') return [new Date(y, m - 1, 1), new Date(y, m, 0)];
-  if (period === 'ytd') return [new Date(y, 0, 1), new Date(y, 11, 31)];
-  return [new Date(2000, 0, 1), new Date(2099, 11, 31)];
-}
-
-function filterByPeriod(expenses, period) {
-  const [from, to] = getDateRange(period);
-  return expenses.filter(e => {
-    const d = parseLocalDate(e.date);
-    return d >= from && d <= to;
-  });
-}
-
-/* ══════════════════════════════════════════════
-   Dashboard
-══════════════════════════════════════════════ */
-function renderDashboard() {
-  const all = loadExpenses();
-  const data = filterByPeriod(all, activePeriod);
-
-  const total = data.reduce((s, e) => s + e.amount, 0);
-  const count = data.length;
-  const avg = count ? total / count : 0;
-  const largest = data.reduce((m, e) => e.amount > m.amount ? e : m, { amount: 0, category: '—' });
-
-  document.getElementById('dash-total').textContent = currency(total);
-  document.getElementById('dash-count').textContent = count + ' transaction' + (count !== 1 ? 's' : '');
-  document.getElementById('dash-largest').textContent = currency(largest.amount);
-  document.getElementById('dash-largest-cat').textContent = largest.category || '—';
-  document.getElementById('dash-avg').textContent = currency(avg);
-  document.getElementById('dash-period-label').textContent =
-    { thisMonth: 'This month', lastMonth: 'Last month', ytd: 'Year to date', all: 'All time' }[activePeriod];
-
-  // category breakdown
-  const catMap = {};
-  data.forEach(e => { catMap[e.category] = (catMap[e.category] || 0) + e.amount; });
-  const catArr = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
-  const maxCat = catArr[0];
-
-  document.getElementById('dash-top-cat').textContent = maxCat ? maxCat[0] : '—';
-  document.getElementById('dash-top-cat-amt').textContent = maxCat ? currency(maxCat[1]) : '—';
-
-  const catList = document.getElementById('dash-cat-list');
-  if (!catArr.length) {
-    catList.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><p>No expenses yet for this period.</p></div>';
-  } else {
-    const maxAmt = catArr[0][1];
-    catList.innerHTML = catArr.map(([cat, amt]) => `
+  // category bars
+  const cm={};data.forEach(e=>{cm[e.category]=(cm[e.category]||0)+e.amount});
+  const ca=Object.entries(cm).sort((a,b)=>b[1]-a[1]);
+  const catEl=$('dash-cats');
+  if(!ca.length){catEl.innerHTML='<div class="empty"><div class="empty-icon">📊</div><p>No expenses yet for this period.</p></div>';
+  }else{
+    const mx=ca[0][1];
+    catEl.innerHTML=ca.map(([c,a])=>`
       <div class="cat-row">
-        <span class="cat-name"><span class="badge ${catClass(cat)}">${cat}</span></span>
-        <div class="bar-track"><div class="bar-fill" style="width:${(amt/maxAmt*100).toFixed(1)}%"></div></div>
-        <span class="cat-amount">${currency(amt)}</span>
+        <span class="cat-name"><span class="badge ${catCls(c)}">${c}</span></span>
+        <div class="bar-track"><div class="bar-fill" style="width:${(a/mx*100).toFixed(1)}%"></div></div>
+        <span class="cat-amt">${cur(a)}</span>
+      </div>`).join('');
+  }
+
+  // top 5
+  const top=[...data].sort((a,b)=>b.amount-a.amount).slice(0,5);
+  $('dash-top').innerHTML=!top.length?'<div class="empty"><p>No expenses yet.</p></div>'
+    :top.map(e=>`<div class="top-row">
+      <div><div class="top-vendor">${esc(e.vendor)}</div>
+        <div class="top-meta">${fmtD(e.date)} · <span class="badge ${catCls(e.category)}">${esc(e.category)}</span></div>
       </div>
-    `).join('');
-  }
+      <div class="amt-exp">${cur(e.amount)}</div>
+    </div>`).join('');
 
-  // recent 5
-  const recent = [...all].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 5);
-  const tbody = document.getElementById('dash-recent-body');
-  if (!recent.length) {
-    tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><p>No recent expenses.</p></div></td></tr>';
-  } else {
-    tbody.innerHTML = recent.map(e => `
-      <tr>
-        <td>${formatDate(e.date)}</td>
-        <td><strong>${esc(e.vendor)}</strong></td>
-        <td><span class="badge ${catClass(e.category)}">${esc(e.category)}</span></td>
-        <td style="color:var(--muted);font-size:.82rem">${esc(e.description || '—')}</td>
-        <td style="text-align:right" class="amount-positive">${currency(e.amount)}</td>
-      </tr>
-    `).join('');
-  }
+  // recent
+  const rec=[...all].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
+  $('dash-recent').innerHTML=!rec.length
+    ?'<tr><td colspan="5"><div class="empty"><p>No transactions yet.</p></div></td></tr>'
+    :rec.map(e=>`<tr>
+      <td style="white-space:nowrap;color:var(--muted);font-size:.78rem">${fmtD(e.date)}</td>
+      <td><strong style="font-size:.84rem">${esc(e.vendor)}</strong></td>
+      <td><span class="badge ${catCls(e.category)}">${esc(e.category)}</span></td>
+      <td style="color:var(--muted);font-size:.78rem;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.description||'—')}</td>
+      <td style="text-align:right" class="amt-exp">${cur(e.amount)}</td>
+    </tr>`).join('');
 }
 
-document.querySelectorAll('.period-tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    activePeriod = btn.dataset.period;
-    document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderDashboard();
-  });
-});
-
-/* ══════════════════════════════════════════════
-   Add / Edit Expense Form
-══════════════════════════════════════════════ */
-function resetForm() {
-  document.getElementById('expense-form').reset();
-  document.getElementById('edit-id').value = '';
-  document.getElementById('add-form-title').textContent = 'Add New Expense';
-  document.getElementById('form-submit-btn').textContent = 'Save Expense';
-  document.getElementById('f-date').value = today();
-  document.getElementById('f-taxdeductible').value = 'yes';
-  document.getElementById('f-deductpct').value = '100';
-  pendingPhoto = null;
-  document.getElementById('photo-preview-img').src = '';
-  document.getElementById('photo-preview-wrap').style.display = 'none';
-  document.querySelector('#photo-drop .photo-drop-label').style.display = '';
+/* ── Form ── */
+let pendingPhoto=null;
+function resetForm(){
+  $('expense-form').reset();
+  $('edit-id').value='';
+  $('form-title').textContent='New Expense';
+  $('form-btn').textContent='Save Expense';
+  $('f-date').value=today();
+  $('f-taxded').value='yes';
+  $('f-pct').value='100';
+  $('meals-note').style.display='none';
+  pendingPhoto=null;
+  $('photo-prev-img').src='';
+  $('photo-prev-wrap').style.display='none';
+  document.querySelector('#photo-drop .drop-lbl').style.display='';
 }
 
-document.querySelector('nav button[data-view="add"]').addEventListener('click', () => {
-  resetForm();
-  showView('add');
+$('f-category').addEventListener('change',function(){
+  const isMeals=this.value==='Meals';
+  $('meals-note').style.display=isMeals?'flex':'none';
+  if(isMeals){$('f-taxded').value='partial';$('f-pct').value='50';}
 });
 
-document.getElementById('form-cancel-btn').addEventListener('click', () => {
-  showView('expenses');
-});
+$('form-cancel').addEventListener('click',()=>showView('expenses'));
 
-document.getElementById('expense-form').addEventListener('submit', e => {
+$('expense-form').addEventListener('submit',e=>{
   e.preventDefault();
-  const id = document.getElementById('edit-id').value;
-  const expenses = loadExpenses();
-
-  const receiptVal = document.getElementById('f-receipt').value;
-  const exp = {
-    id: id || genId(),
-    date: document.getElementById('f-date').value,
-    amount: parseFloat(document.getElementById('f-amount').value),
-    vendor: document.getElementById('f-vendor').value.trim(),
-    category: document.getElementById('f-category').value,
-    payment: document.getElementById('f-payment').value,
-    receipt: pendingPhoto ? 'yes' : receiptVal,
-    description: document.getElementById('f-description').value.trim(),
-    taxDeductible: document.getElementById('f-taxdeductible').value,
-    deductPct: document.getElementById('f-deductpct').value,
-    photo: pendingPhoto,
+  const id=$('edit-id').value,exps=loadExp();
+  const exp={
+    id:id||genId(),
+    date:$('f-date').value,
+    amount:parseFloat($('f-amount').value),
+    vendor:$('f-vendor').value.trim(),
+    category:$('f-category').value,
+    payment:$('f-payment').value,
+    receipt:pendingPhoto?'yes':$('f-receipt').value,
+    description:$('f-desc').value.trim(),
+    taxDeductible:$('f-taxded').value,
+    deductPct:$('f-pct').value,
+    photo:pendingPhoto,
   };
-
-  if (id) {
-    const idx = expenses.findIndex(x => x.id === id);
-    if (idx > -1) expenses[idx] = exp;
-    toast('Expense updated.');
-  } else {
-    expenses.push(exp);
-    toast('Expense saved!');
-  }
-
-  saveExpenses(expenses);
-  resetForm();
-  showView('expenses');
+  if(id){const i=exps.findIndex(x=>x.id===id);if(i>-1)exps[i]=exp;toast('Expense updated.');}
+  else{exps.push(exp);toast('Expense saved!');}
+  saveExp(exps);resetForm();showView('expenses');
 });
 
-function editExpense(id) {
-  const exp = loadExpenses().find(e => e.id === id);
-  if (!exp) return;
+function editExpense(id){
+  const e=loadExp().find(x=>x.id===id);if(!e)return;
   resetForm();
-  document.getElementById('edit-id').value = exp.id;
-  document.getElementById('f-date').value = exp.date;
-  document.getElementById('f-amount').value = exp.amount;
-  document.getElementById('f-vendor').value = exp.vendor;
-  document.getElementById('f-category').value = exp.category;
-  document.getElementById('f-payment').value = exp.payment;
-  document.getElementById('f-receipt').value = exp.receipt;
-  document.getElementById('f-description').value = exp.description;
-  document.getElementById('f-taxdeductible').value = exp.taxDeductible;
-  document.getElementById('f-deductpct').value = exp.deductPct || 100;
-  if (exp.photo) showPhotoPreview(exp.photo);
-  document.getElementById('add-form-title').textContent = 'Edit Expense';
-  document.getElementById('form-submit-btn').textContent = 'Update Expense';
+  $('edit-id').value=e.id;$('f-date').value=e.date;$('f-amount').value=e.amount;
+  $('f-vendor').value=e.vendor;$('f-category').value=e.category;
+  $('f-payment').value=e.payment;$('f-receipt').value=e.receipt;
+  $('f-desc').value=e.description;$('f-taxded').value=e.taxDeductible;
+  $('f-pct').value=e.deductPct||100;
+  if(e.category==='Meals')$('meals-note').style.display='flex';
+  if(e.photo)showPhoto(e.photo);
+  $('form-title').textContent='Edit Expense';
+  $('form-btn').textContent='Update Expense';
   showView('add');
 }
 
-/* ══════════════════════════════════════════════
-   Expenses List
-══════════════════════════════════════════════ */
-let sortCol = 'date', sortDir = -1;
-let deleteTargetId = null;
+/* ── Transactions list ── */
+let sortCol='date',sortDir=-1,delId=null;
 
-function formatDate(str) {
-  if (!str) return '—';
-  const [y, m, d] = str.split('-');
-  return `${MONTHS[+m-1]} ${+d}, ${y}`;
+function getFiltered(){
+  let d=loadExp();
+  const q=$('f-search').value.toLowerCase(),cat=$('f-cat').value,
+        from=$('f-from').value,to=$('f-to').value,pay=$('f-pay').value;
+  if(q)d=d.filter(e=>(e.vendor||'').toLowerCase().includes(q)||(e.description||'').toLowerCase().includes(q));
+  if(cat)d=d.filter(e=>e.category===cat);
+  if(from)d=d.filter(e=>e.date>=from);
+  if(to)d=d.filter(e=>e.date<=to);
+  if(pay)d=d.filter(e=>e.payment===pay);
+  d.sort((a,b)=>{let av=a[sortCol],bv=b[sortCol];
+    if(sortCol==='amount'){av=+av;bv=+bv;}
+    if(av<bv)return-1*sortDir;if(av>bv)return 1*sortDir;return 0;});
+  return d;
 }
 
-function esc(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function getFiltered() {
-  let data = loadExpenses();
-  const q = document.getElementById('filter-search').value.toLowerCase();
-  const cat = document.getElementById('filter-cat').value;
-  const from = document.getElementById('filter-from').value;
-  const to = document.getElementById('filter-to').value;
-  const pay = document.getElementById('filter-payment').value;
-
-  if (q) data = data.filter(e =>
-    (e.vendor || '').toLowerCase().includes(q) ||
-    (e.description || '').toLowerCase().includes(q)
-  );
-  if (cat) data = data.filter(e => e.category === cat);
-  if (from) data = data.filter(e => e.date >= from);
-  if (to) data = data.filter(e => e.date <= to);
-  if (pay) data = data.filter(e => e.payment === pay);
-
-  data.sort((a, b) => {
-    let av = a[sortCol], bv = b[sortCol];
-    if (sortCol === 'amount') { av = +av; bv = +bv; }
-    if (av < bv) return -1 * sortDir;
-    if (av > bv) return  1 * sortDir;
-    return 0;
-  });
-
-  return data;
-}
-
-function renderExpenses() {
-  const data = getFiltered();
-  const total = data.reduce((s, e) => s + e.amount, 0);
-  document.getElementById('filter-count').textContent = data.length;
-  document.getElementById('filter-total').textContent = currency(total);
-
-  const tbody = document.getElementById('expenses-body');
-  if (!data.length) {
-    tbody.innerHTML = '<tr><td colspan="9"><div class="empty"><div class="empty-icon">🧾</div><p>No expenses match your filters.</p></div></td></tr>';
-    return;
+function renderExp(){
+  const data=getFiltered(),total=data.reduce((s,e)=>s+e.amount,0);
+  $('f-count').textContent=data.length;
+  $('f-total').textContent=cur(total);
+  const tbody=$('exp-body');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="9"><div class="empty"><div class="empty-icon">🧾</div><p>No transactions match your filters.</p></div></td></tr>';
+  }else{
+    tbody.innerHTML=data.map(e=>{
+      const ri=e.receipt==='yes'?'<span class="rc-y">✓</span>':e.receipt==='digital'?'<span class="rc-y">📧</span>':'<span class="rc-n">✗</span>';
+      const pi=e.photo?`<img class="photo-thumb" src="${e.photo}" alt="receipt" onclick="openLbox('${e.id}')"/>`:'<span style="color:var(--border);font-size:.72rem">—</span>';
+      return`<tr>
+        <td style="white-space:nowrap;color:var(--muted);font-size:.78rem">${fmtD(e.date)}</td>
+        <td><strong style="font-size:.84rem">${esc(e.vendor)}</strong></td>
+        <td><span class="badge ${catCls(e.category)}">${esc(e.category)}</span></td>
+        <td style="color:var(--muted);font-size:.78rem;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.description||'—')}</td>
+        <td style="font-size:.78rem;color:var(--muted)">${esc(e.payment)}</td>
+        <td style="text-align:center">${ri}</td>
+        <td style="text-align:center">${pi}</td>
+        <td style="text-align:right" class="amt-exp">${cur(e.amount)}</td>
+        <td style="text-align:center;white-space:nowrap">
+          <button class="btn btn-ghost btn-sm" onclick="editExpense('${e.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmDel('${e.id}')" style="margin-left:4px">Del</button>
+        </td>
+      </tr>`;
+    }).join('');
   }
-  tbody.innerHTML = data.map(e => {
-    const receiptIcon = e.receipt === 'yes' ? '<span class="receipt-yes" title="Receipt on hand">✓</span>'
-      : e.receipt === 'digital' ? '<span class="receipt-yes" title="Digital receipt">📧</span>'
-      : '<span class="receipt-no" title="Missing receipt">✗</span>';
-    const photoCell = e.photo
-      ? `<img class="photo-thumb" src="${e.photo}" alt="receipt" onclick="openPhotoLightbox('${e.id}')" />`
-      : '<span style="color:var(--border);font-size:.8rem">—</span>';
-    return `
-    <tr>
-      <td style="white-space:nowrap">${formatDate(e.date)}</td>
-      <td><strong>${esc(e.vendor)}</strong></td>
-      <td><span class="badge ${catClass(e.category)}">${esc(e.category)}</span></td>
-      <td style="color:var(--muted);font-size:.82rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.description || '—')}</td>
-      <td style="font-size:.82rem">${esc(e.payment)}</td>
-      <td style="text-align:center">${receiptIcon}</td>
-      <td style="text-align:center">${photoCell}</td>
-      <td style="text-align:right" class="amount-positive">${currency(e.amount)}</td>
-      <td style="text-align:center;white-space:nowrap">
-        <button class="btn btn-outline btn-sm" onclick="editExpense('${e.id}')">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${e.id}')" style="margin-left:4px">Del</button>
-      </td>
-    </tr>`;
-  }).join('');
-
-  // update sort icons
-  document.querySelectorAll('#expenses-table th[data-sort]').forEach(th => {
-    th.classList.toggle('sorted', th.dataset.sort === sortCol);
-    const icon = th.querySelector('.sort-icon');
-    if (icon) icon.textContent = th.dataset.sort === sortCol ? (sortDir === 1 ? '↑' : '↓') : '↕';
+  document.querySelectorAll('#exp-table th[data-sort]').forEach(th=>{
+    th.classList.toggle('sorted',th.dataset.sort===sortCol);
+    const si=th.querySelector('.si');
+    if(si)si.textContent=th.dataset.sort===sortCol?(sortDir===1?'↑':'↓'):'↕';
   });
 }
 
-document.querySelectorAll('#expenses-table th[data-sort]').forEach(th => {
-  th.addEventListener('click', () => {
-    if (sortCol === th.dataset.sort) sortDir *= -1;
-    else { sortCol = th.dataset.sort; sortDir = th.dataset.sort === 'date' ? -1 : 1; }
-    renderExpenses();
-  });
+document.querySelectorAll('#exp-table th[data-sort]').forEach(th=>th.addEventListener('click',()=>{
+  if(sortCol===th.dataset.sort)sortDir*=-1;
+  else{sortCol=th.dataset.sort;sortDir=th.dataset.sort==='date'?-1:1;}
+  renderExp();
+}));
+['f-search','f-cat','f-from','f-to','f-pay'].forEach(id=>{
+  $(id).addEventListener('input',renderExp);$(id).addEventListener('change',renderExp);
+});
+$('btn-clear').addEventListener('click',()=>{
+  ['f-search','f-cat','f-from','f-to','f-pay'].forEach(id=>{$(id).value=''});renderExp();
 });
 
-['filter-search','filter-cat','filter-from','filter-to','filter-payment'].forEach(id => {
-  document.getElementById(id).addEventListener('input', renderExpenses);
-  document.getElementById(id).addEventListener('change', renderExpenses);
+/* delete */
+function confirmDel(id){delId=id;$('del-modal').classList.add('open')}
+$('del-cancel').addEventListener('click',()=>{$('del-modal').classList.remove('open');delId=null});
+$('del-confirm').addEventListener('click',()=>{
+  if(!delId)return;
+  saveExp(loadExp().filter(e=>e.id!==delId));
+  $('del-modal').classList.remove('open');delId=null;renderExp();toast('Expense deleted.');
+});
+$('del-modal').addEventListener('click',e=>{if(e.target===e.currentTarget){e.currentTarget.classList.remove('open');delId=null}});
+$('add-first').addEventListener('click',e=>{e.preventDefault();resetForm();showView('add')});
+
+/* ── CSV ── */
+function toCSV(rows){
+  const cols=['Date','Vendor','Schedule C Category','Notes','Payment','Receipt','Amount','Tax Deductible','Ded %','Deductible Amount'];
+  return[cols.join(','),...rows.map(e=>[
+    e.date,`"${(e.vendor||'').replace(/"/g,'""')}"`,e.category,
+    `"${(e.description||'').replace(/"/g,'""')}"`,
+    e.payment,e.receipt,e.amount,e.taxDeductible,e.deductPct||100,dedAmt(e).toFixed(2)
+  ].join(','))].join('\n');
+}
+function dlCSV(c,f){const b=new Blob([c],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=f;a.click();URL.revokeObjectURL(u)}
+$('btn-csv').addEventListener('click',()=>{const d=getFiltered();if(!d.length){toast('Nothing to export.');return}dlCSV(toCSV(d),'expenses.csv');toast('CSV exported!')});
+$('rep-csv').addEventListener('click',()=>{
+  const yr=$('rep-year').value,d=loadExp().filter(e=>e.date.startsWith(yr));
+  if(!d.length){toast('No expenses for this year.');return}
+  dlCSV(toCSV(d),`schedule-c-${yr}.csv`);toast(`${yr} Schedule C exported!`);
 });
 
-document.getElementById('filter-clear').addEventListener('click', () => {
-  ['filter-search','filter-cat','filter-from','filter-to','filter-payment']
-    .forEach(id => { document.getElementById(id).value = ''; });
-  renderExpenses();
-});
+/* ── Reports ── */
+function renderRep(){
+  const exps=loadExp();
+  const yrs=[...new Set(exps.map(e=>e.date.slice(0,4)))].sort().reverse();
+  if(!yrs.length)yrs.push(new Date().getFullYear().toString());
+  const sel=$('rep-year'),cur2=sel.value||new Date().getFullYear().toString();
+  sel.innerHTML=yrs.map(y=>`<option${y===cur2?' selected':''}>${y}</option>`).join('');
+  renderYear(sel.value||yrs[0]);
+}
+$('rep-year').addEventListener('change',e=>renderYear(e.target.value));
 
-/* Delete modal */
-function confirmDelete(id) {
-  deleteTargetId = id;
-  document.getElementById('delete-modal').classList.add('open');
+function renderYear(yr){
+  const exps=loadExp().filter(e=>e.date.startsWith(yr));
+  const total=exps.reduce((s,e)=>s+e.amount,0);
+  const ded=exps.reduce((s,e)=>s+dedAmt(e),0);
+  const cnt=exps.length;
+  $('rep-tiles').innerHTML=`
+    <div class="tile"><div class="tile-lbl">Total Expenses</div><div class="tile-val r">${cur(total)}</div></div>
+    <div class="tile"><div class="tile-lbl">Transactions</div><div class="tile-val">${cnt}</div></div>
+    <div class="tile"><div class="tile-lbl">Tax Deductible</div><div class="tile-val g">${cur(ded)}</div></div>
+    <div class="tile"><div class="tile-lbl">Non-Deductible</div><div class="tile-val">${cur(total-ded)}</div></div>`;
+  const mon={};
+  exps.forEach(e=>{const m=e.date.slice(5,7);if(!mon[m])mon[m]={amt:0,cnt:0,ded:0};mon[m].amt+=e.amount;mon[m].cnt++;mon[m].ded+=dedAmt(e)});
+  let mh='';
+  for(let i=1;i<=12;i++){const m=String(i).padStart(2,'0'),r=mon[m];
+    mh+=`<tr><td>${MONTHS[i-1]} ${yr}</td><td style="text-align:right">${r?cur(r.amt):'—'}</td><td style="text-align:right">${r?r.cnt:'—'}</td><td style="text-align:right">${r?cur(r.ded):'—'}</td></tr>`;}
+  mh+=`<tr style="font-weight:700;border-top:2px solid var(--border)"><td>Total ${yr}</td><td style="text-align:right">${cur(total)}</td><td style="text-align:right">${cnt}</td><td style="text-align:right">${cur(ded)}</td></tr>`;
+  $('rep-monthly').innerHTML=mh;
+  const cm={};exps.forEach(e=>{if(!cm[e.category])cm[e.category]={amt:0,cnt:0,ded:0};cm[e.category].amt+=e.amount;cm[e.category].cnt++;cm[e.category].ded+=dedAmt(e)});
+  const ca=Object.entries(cm).sort((a,b)=>b[1].amt-a[1].amt);
+  $('rep-cats').innerHTML=!ca.length
+    ?'<tr><td colspan="5"><div class="empty"><p>No expenses for this year.</p></div></td></tr>'
+    :ca.map(([c,d])=>`<tr>
+      <td><span class="badge ${catCls(c)}">${esc(c)}</span></td>
+      <td style="text-align:right">${cur(d.amt)}</td>
+      <td style="text-align:right">${d.cnt}</td>
+      <td style="text-align:right">${total?(d.amt/total*100).toFixed(1)+'%':'—'}</td>
+      <td style="text-align:right">${cur(d.ded)}</td>
+    </tr>`).join('')
+    +`<tr style="font-weight:700;border-top:2px solid var(--border)">
+      <td>Total</td><td style="text-align:right">${cur(total)}</td>
+      <td style="text-align:right">${cnt}</td><td style="text-align:right">100%</td>
+      <td style="text-align:right">${cur(ded)}</td></tr>`;
 }
 
-document.getElementById('delete-cancel').addEventListener('click', () => {
-  document.getElementById('delete-modal').classList.remove('open');
-  deleteTargetId = null;
-});
-
-document.getElementById('delete-confirm').addEventListener('click', () => {
-  if (!deleteTargetId) return;
-  const expenses = loadExpenses().filter(e => e.id !== deleteTargetId);
-  saveExpenses(expenses);
-  document.getElementById('delete-modal').classList.remove('open');
-  deleteTargetId = null;
-  renderExpenses();
-  toast('Expense deleted.');
-});
-
-document.getElementById('delete-modal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) {
-    e.currentTarget.classList.remove('open');
-    deleteTargetId = null;
-  }
-});
-
-document.getElementById('add-first-link') && document.getElementById('add-first-link').addEventListener('click', e => {
-  e.preventDefault();
-  resetForm();
-  showView('add');
-});
-
-/* ══════════════════════════════════════════════
-   CSV Export
-══════════════════════════════════════════════ */
-function toCSV(rows) {
-  const cols = ['Date','Vendor','Category','Description','Payment Method','Receipt','Amount','Tax Deductible','Deductible %'];
-  const lines = [cols.join(',')];
-  rows.forEach(e => {
-    lines.push([
-      e.date, e.vendor, e.category,
-      '"' + (e.description || '').replace(/"/g,'""') + '"',
-      e.payment, e.receipt, e.amount,
-      e.taxDeductible, e.deductPct || 100
-    ].join(','));
-  });
-  return lines.join('\n');
+/* ── Settings ── */
+function loadSetForm(){
+  $('s-name').value=cfg.llcName||'';$('s-ein').value=cfg.ein||'';
+  $('s-fiscal').value=cfg.fiscal||'01';$('s-cur').value=cfg.currency||'$';
 }
-
-function downloadCSV(content, filename) {
-  const blob = new Blob([content], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
-}
-
-document.getElementById('export-csv').addEventListener('click', () => {
-  const data = getFiltered();
-  if (!data.length) { toast('No expenses to export.'); return; }
-  downloadCSV(toCSV(data), 'expenses-export.csv');
-  toast('CSV exported!');
-});
-
-document.getElementById('report-export-csv').addEventListener('click', () => {
-  const year = document.getElementById('report-year').value;
-  const data = loadExpenses().filter(e => e.date.startsWith(year));
-  if (!data.length) { toast('No expenses for this year.'); return; }
-  downloadCSV(toCSV(data), `expenses-${year}.csv`);
-  toast(`${year} CSV exported!`);
-});
-
-/* ══════════════════════════════════════════════
-   Reports
-══════════════════════════════════════════════ */
-function renderReports() {
-  const expenses = loadExpenses();
-  const years = [...new Set(expenses.map(e => e.date.slice(0, 4)))].sort().reverse();
-  if (!years.length) years.push(new Date().getFullYear().toString());
-
-  const sel = document.getElementById('report-year');
-  const cur = sel.value || new Date().getFullYear().toString();
-  sel.innerHTML = years.map(y => `<option${y === cur ? ' selected' : ''}>${y}</option>`).join('');
-
-  renderYearReport(sel.value || years[0]);
-}
-
-document.getElementById('report-year').addEventListener('change', e => renderYearReport(e.target.value));
-
-function renderYearReport(year) {
-  const expenses = loadExpenses().filter(e => e.date.startsWith(year));
-  const total = expenses.reduce((s, e) => s + e.amount, 0);
-  const deductTotal = expenses.reduce((s, e) => s + deductibleAmount(e), 0);
-  const count = expenses.length;
-
-  // tiles
-  document.getElementById('report-tiles').innerHTML = `
-    <div class="tile"><div class="tile-label">Total Spent</div><div class="tile-value danger">${currency(total)}</div></div>
-    <div class="tile"><div class="tile-label">Transactions</div><div class="tile-value">${count}</div></div>
-    <div class="tile"><div class="tile-label">Tax Deductible</div><div class="tile-value success">${currency(deductTotal)}</div></div>
-    <div class="tile"><div class="tile-label">Non-Deductible</div><div class="tile-value">${currency(total - deductTotal)}</div></div>
-  `;
-
-  // monthly
-  const monthly = {};
-  expenses.forEach(e => {
-    const m = e.date.slice(5, 7);
-    if (!monthly[m]) monthly[m] = { amt: 0, cnt: 0, ded: 0 };
-    monthly[m].amt += e.amount;
-    monthly[m].cnt++;
-    monthly[m].ded += deductibleAmount(e);
-  });
-
-  const mBody = document.getElementById('report-monthly-body');
-  let mHtml = '';
-  for (let i = 1; i <= 12; i++) {
-    const m = String(i).padStart(2, '0');
-    const row = monthly[m];
-    mHtml += `<tr>
-      <td>${MONTHS[i-1]} ${year}</td>
-      <td style="text-align:right">${row ? currency(row.amt) : '—'}</td>
-      <td style="text-align:right">${row ? row.cnt : '—'}</td>
-      <td style="text-align:right">${row ? currency(row.ded) : '—'}</td>
-    </tr>`;
-  }
-  mHtml += `<tr style="font-weight:700;border-top:2px solid var(--border)">
-    <td>Total</td>
-    <td style="text-align:right">${currency(total)}</td>
-    <td style="text-align:right">${count}</td>
-    <td style="text-align:right">${currency(deductTotal)}</td>
-  </tr>`;
-  mBody.innerHTML = mHtml;
-
-  // by category
-  const catMap = {};
-  expenses.forEach(e => {
-    if (!catMap[e.category]) catMap[e.category] = { amt: 0, cnt: 0, ded: 0 };
-    catMap[e.category].amt += e.amount;
-    catMap[e.category].cnt++;
-    catMap[e.category].ded += deductibleAmount(e);
-  });
-  const catArr = Object.entries(catMap).sort((a, b) => b[1].amt - a[1].amt);
-
-  const cBody = document.getElementById('report-cat-body');
-  if (!catArr.length) {
-    cBody.innerHTML = '<tr><td colspan="5"><div class="empty"><p>No expenses for this year.</p></div></td></tr>';
-  } else {
-    cBody.innerHTML = catArr.map(([cat, d]) => `
-      <tr>
-        <td><span class="badge ${catClass(cat)}">${esc(cat)}</span></td>
-        <td style="text-align:right">${currency(d.amt)}</td>
-        <td style="text-align:right">${d.cnt}</td>
-        <td style="text-align:right">${total ? (d.amt/total*100).toFixed(1)+'%' : '—'}</td>
-        <td style="text-align:right">${currency(d.ded)}</td>
-      </tr>
-    `).join('') + `<tr style="font-weight:700;border-top:2px solid var(--border)">
-      <td>Total</td>
-      <td style="text-align:right">${currency(total)}</td>
-      <td style="text-align:right">${count}</td>
-      <td style="text-align:right">100%</td>
-      <td style="text-align:right">${currency(deductTotal)}</td>
-    </tr>`;
-  }
-}
-
-function printReport() { window.print(); }
-
-/* ══════════════════════════════════════════════
-   Settings
-══════════════════════════════════════════════ */
-function loadSettingsForm() {
-  document.getElementById('s-llcname').value = settings.llcName || '';
-  document.getElementById('s-ein').value = settings.ein || '';
-  document.getElementById('s-fiscal').value = settings.fiscal || '01';
-  document.getElementById('s-currency').value = settings.currency || '$';
-}
-
-document.getElementById('save-settings-btn').addEventListener('click', () => {
-  settings.llcName = document.getElementById('s-llcname').value.trim();
-  settings.ein = document.getElementById('s-ein').value.trim();
-  settings.fiscal = document.getElementById('s-fiscal').value;
-  settings.currency = document.getElementById('s-currency').value || '$';
-  saveSettings(settings);
-  document.getElementById('llc-name-display').textContent = settings.llcName || '';
+$('btn-save-settings').addEventListener('click',()=>{
+  cfg.llcName=$('s-name').value.trim();cfg.ein=$('s-ein').value.trim();
+  cfg.fiscal=$('s-fiscal').value;cfg.currency=$('s-cur').value||'$';
+  saveSet(cfg);
+  $('llc-name-display').textContent=cfg.llcName||'';
+  $('brand-name').textContent=cfg.llcName||'Solopreneur';
   toast('Settings saved!');
 });
 
-/* ══════════════════════════════════════════════
-   JSON Backup / Restore
-══════════════════════════════════════════════ */
-document.getElementById('export-json-btn').addEventListener('click', () => {
-  const data = { expenses: loadExpenses(), settings: loadSettings(), exported: new Date().toISOString() };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'llc-expenses-backup-' + today() + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
+/* ── Backup ── */
+$('btn-exp-json').addEventListener('click',()=>{
+  const d={expenses:loadExp(),settings:loadSet(),exported:new Date().toISOString()};
+  const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b);const a=document.createElement('a');
+  a.href=u;a.download='expenses-backup-'+today()+'.json';a.click();URL.revokeObjectURL(u);
   toast('Backup exported!');
 });
-
-document.getElementById('import-json-btn').addEventListener('click', () => {
-  document.getElementById('import-file-input').click();
+$('btn-imp-json').addEventListener('click',()=>$('imp-file').click());
+$('imp-file').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{const d=JSON.parse(ev.target.result);
+    if(d.expenses)saveExp(d.expenses);
+    if(d.settings){saveSet(d.settings);cfg=d.settings;}
+    toast('Restored! '+(d.expenses||[]).length+' expenses loaded.');renderDash();
+  }catch{toast('Error: invalid file.')}};
+  r.readAsText(f);e.target.value='';
+});
+$('btn-clear-all').addEventListener('click',()=>{
+  if(confirm('Delete ALL expense data? Cannot be undone.')){saveExp([]);toast('All data cleared.');renderDash()}
 });
 
-document.getElementById('import-file-input').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      if (data.expenses) saveExpenses(data.expenses);
-      if (data.settings) { saveSettings(data.settings); settings = data.settings; }
-      toast('Backup restored! ' + (data.expenses || []).length + ' expenses loaded.');
-      renderDashboard();
-    } catch {
-      toast('Error: invalid backup file.');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
-
-document.getElementById('clear-data-btn').addEventListener('click', () => {
-  if (confirm('Are you sure? This will permanently delete ALL expenses. This cannot be undone.')) {
-    saveExpenses([]);
-    toast('All expense data cleared.');
-    renderDashboard();
-  }
-});
-
-/* ══════════════════════════════════════════════
-   Photo Upload
-══════════════════════════════════════════════ */
-let pendingPhoto = null; // base64 string or null
-
-function compressImage(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = ev => {
-      const img = new Image();
-      img.onerror = reject;
-      img.onload = () => {
-        const MAX = 1200;
-        let { width, height } = img;
-        if (width > MAX || height > MAX) {
-          if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
-          else { width = Math.round(width * MAX / height); height = MAX; }
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = width; canvas.height = height;
-        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.72));
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
+/* ── Photo ── */
+function compressImg(file){
+  return new Promise((res,rej)=>{
+    const rd=new FileReader();rd.onerror=rej;
+    rd.onload=ev=>{const img=new Image();img.onerror=rej;
+      img.onload=()=>{const MAX=1200;let{width:w,height:h}=img;
+        if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',0.72));};
+      img.src=ev.target.result;};
+    rd.readAsDataURL(file);});
 }
-
-function showPhotoPreview(dataUrl) {
-  pendingPhoto = dataUrl;
-  document.getElementById('photo-preview-img').src = dataUrl;
-  document.getElementById('photo-preview-wrap').style.display = 'inline-block';
-  document.querySelector('#photo-drop .photo-drop-label').style.display = 'none';
+function showPhoto(url){
+  pendingPhoto=url;$('photo-prev-img').src=url;
+  $('photo-prev-wrap').style.display='inline-block';
+  document.querySelector('#photo-drop .drop-lbl').style.display='none';
 }
-
-function removePhoto(e) {
-  e.stopPropagation();
-  pendingPhoto = null;
-  document.getElementById('f-photo').value = '';
-  document.getElementById('photo-preview-img').src = '';
-  document.getElementById('photo-preview-wrap').style.display = 'none';
-  document.querySelector('#photo-drop .photo-drop-label').style.display = '';
+function removePhoto(e){
+  e.stopPropagation();pendingPhoto=null;$('f-photo').value='';
+  $('photo-prev-img').src='';$('photo-prev-wrap').style.display='none';
+  document.querySelector('#photo-drop .drop-lbl').style.display='';
 }
-
-document.getElementById('f-photo').addEventListener('change', async e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-    const dataUrl = await compressImage(file);
-    showPhotoPreview(dataUrl);
-  } catch { toast('Could not load image.'); }
+$('f-photo').addEventListener('change',async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{showPhoto(await compressImg(f))}catch{toast('Could not load image.')}
 });
-
-const dropZone = document.getElementById('photo-drop');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', async e => {
-  e.preventDefault();
-  dropZone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (!file || !file.type.startsWith('image/')) { toast('Please drop an image file.'); return; }
-  try {
-    const dataUrl = await compressImage(file);
-    showPhotoPreview(dataUrl);
-  } catch { toast('Could not load image.'); }
+const dz=$('photo-drop');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',async e=>{
+  e.preventDefault();dz.classList.remove('drag-over');
+  const f=e.dataTransfer.files[0];
+  if(!f||!f.type.startsWith('image/')){toast('Please drop an image.');return}
+  try{showPhoto(await compressImg(f))}catch{toast('Could not load image.')}
 });
 
 /* ── Lightbox ── */
-let lightboxDataUrl = null;
-let lightboxVendor = '';
-
-function openPhotoLightbox(idOrUrl, vendor) {
-  let dataUrl = idOrUrl, v = vendor || '';
-  if (!idOrUrl.startsWith('data:')) {
-    const exp = loadExpenses().find(e => e.id === idOrUrl);
-    if (!exp || !exp.photo) return;
-    dataUrl = exp.photo; v = exp.vendor || '';
-  }
-  lightboxDataUrl = dataUrl;
-  lightboxVendor = v;
-  document.getElementById('photo-lightbox-img').src = dataUrl;
-  document.getElementById('photo-lightbox-caption').textContent = v ? 'Receipt — ' + v : 'Receipt photo';
-  document.getElementById('photo-lightbox').classList.add('open');
+let lboxUrl=null,lboxVendor='';
+function openLbox(idOrUrl,vendor){
+  let url=idOrUrl,v=vendor||'';
+  if(!idOrUrl.startsWith('data:')){const e=loadExp().find(x=>x.id===idOrUrl);if(!e||!e.photo)return;url=e.photo;v=e.vendor||''}
+  lboxUrl=url;lboxVendor=v;
+  $('lbox-img').src=url;$('lbox-cap').textContent=v?'Receipt — '+v:'Receipt photo';
+  $('lbox').classList.add('open');
 }
+function closeLbox(){$('lbox').classList.remove('open')}
+function dlLbox(){if(!lboxUrl)return;const a=document.createElement('a');a.href=lboxUrl;a.download='receipt-'+(lboxVendor||'photo').replace(/\s+/g,'-').toLowerCase()+'.jpg';a.click()}
+$('lbox').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLbox()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLbox()});
 
-function closePhotoLightbox() {
-  document.getElementById('photo-lightbox').classList.remove('open');
-}
-
-function downloadLightboxPhoto() {
-  if (!lightboxDataUrl) return;
-  const a = document.createElement('a');
-  a.href = lightboxDataUrl;
-  a.download = 'receipt-' + (lightboxVendor || 'photo').replace(/\s+/g, '-').toLowerCase() + '.jpg';
-  a.click();
-}
-
-document.getElementById('photo-lightbox').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closePhotoLightbox();
-});
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closePhotoLightbox();
-});
-
-/* ══════════════════════════════════════════════
-   Init
-══════════════════════════════════════════════ */
-document.getElementById('f-date').value = today();
-document.getElementById('llc-name-display').textContent = settings.llcName || '';
-renderDashboard();
+/* ── Init ── */
+$('f-date').value=today();
+$('llc-name-display').textContent=cfg.llcName||'';
+$('brand-name').textContent=cfg.llcName||'Solopreneur';
+renderDash();
 </script>
 </body>
 </html>
