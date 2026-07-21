@@ -1,0 +1,4 @@
+# Local agent/video-tooling artifacts — not site content
+.agents/
+.claude/
+skills-lock.json
