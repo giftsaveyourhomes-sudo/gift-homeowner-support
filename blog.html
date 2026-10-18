@@ -33,15 +33,15 @@
 
   <style>
     :root{
-      --bg:#f4fbff;
-      --card:#ffffff;
-      --text:#0f172a;
-      --muted:#475569;
+      --bg:#fbf8f3;
+      --card:#fffdfa;
+      --text:#1c2230;
+      --muted:#5b6778;
       --accent:#1e40af;
       --accent2:#2563eb;
-      --accent-warm:#f59e0b;
-      --border:rgba(15,23,42,.12);
-      --shadow: 0 10px 24px rgba(15,23,42,.14);
+      --accent-warm:#b45309;
+      --border:rgba(30,64,175,.09);
+      --shadow: 0 10px 28px rgba(30,64,175,.07);
       --radius: 18px;
       --max: 860px;
       --sans: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -51,7 +51,8 @@
       margin:0;
       font-family:var(--sans);
       background:
-        linear-gradient(180deg, rgba(30,64,175,.08), rgba(244,251,255,1) 150px),
+        radial-gradient(1100px 600px at 50% -10%, rgba(30,64,175,.07), transparent 60%),
+        radial-gradient(900px 500px at 100% 100%, rgba(245,158,11,.06), transparent 60%),
         var(--bg);
       color:var(--text);
       line-height:1.7;
@@ -59,20 +60,20 @@
     }
     a{color:var(--accent); text-underline-offset:3px}
     a:hover{color:var(--accent2)}
-    .wrap{max-width:var(--max); margin:0 auto; padding:34px 18px 90px; background:rgba(245,249,255,.72);}
+    .wrap{max-width:var(--max); margin:0 auto; padding:34px 18px 90px;}
 
     header{
       display:flex; align-items:center; justify-content:space-between;
       gap:16px; position:sticky; top:0; z-index:20;
       padding:14px 18px; margin:0 -18px;
-      background: rgba(245,249,255,.92);
+      background: rgba(251,248,243,.92);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
     }
     .brand{display:flex; gap:12px; align-items:center; text-decoration:none;}
     .avatar{
       width:42px; height:42px; border-radius:12px;
-      background: linear-gradient(135deg, rgba(30,64,175,.95), rgba(37,99,235,.85));
+      background: var(--accent);
       box-shadow:var(--shadow);
       display:grid; place-items:center;
       font-weight:900; color:white;
@@ -82,7 +83,7 @@
     nav a:hover, nav a.active{background:rgba(37,99,235,.10); color:var(--accent)}
 
     .card{
-      background:linear-gradient(180deg, rgba(37,99,235,.04), rgba(245,158,11,.03), var(--card));
+      background: linear-gradient(165deg, rgba(30,64,175,.05), rgba(245,158,11,.04) 55%, var(--card));
       border:1px solid var(--border);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
@@ -167,23 +168,61 @@
     /* Sticky mobile call button */
     .sticky-footer{
       position:fixed; left:0; bottom:0; width:100%;
-      background:rgba(255,255,255,.95); backdrop-filter:blur(10px);
-      border-top:1px solid var(--border); box-shadow:0 -4px 20px rgba(0,0,0,.1);
+      background:rgba(251,248,243,.95); backdrop-filter:blur(10px);
+      border-top:1px solid var(--border); box-shadow:0 -4px 20px rgba(0,0,0,.06);
       padding:12px; z-index:100; display:flex; justify-content:center;
     }
     .sticky-btn{
-      background-color:#dc2626; color:white;
+      background-color:var(--accent); color:white;
       padding:12px 24px; text-decoration:none; font-weight:800;
       border-radius:50px; font-size:1.1rem;
-      box-shadow:0 4px 12px rgba(220,38,38,.3);
+      box-shadow:0 4px 12px rgba(30,64,175,.25);
       display:flex; align-items:center; gap:8px;
     }
+
+    /* Search + category toolbar */
+    .blog-toolbar{
+      position:sticky; top:73px; z-index:15;
+      background:rgba(251,248,243,.92);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:16px 18px;
+      margin-bottom:24px;
+      box-shadow: var(--shadow);
+    }
+    .search-wrap{position:relative;}
+    .search-wrap input{
+      width:100%; padding:12px 14px 12px 40px;
+      border:1px solid var(--border); border-radius:12px;
+      font-family:var(--sans); font-size:15px;
+      background:rgba(255,255,255,.75); color:var(--text);
+    }
+    .search-wrap input:focus{outline:2px solid rgba(30,64,175,.35); outline-offset:1px;}
+    .search-wrap::before{
+      content:"🔍"; position:absolute; left:13px; top:50%; transform:translateY(-50%);
+      font-size:14px; opacity:.6; pointer-events:none;
+    }
+    .chip-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+    .chip{
+      display:inline-flex; align-items:center; padding:7px 13px; border-radius:999px;
+      border:1px solid var(--border); background:rgba(255,255,255,.6);
+      color:var(--text); font-size:13px; font-weight:700; cursor:pointer;
+      line-height:1;
+    }
+    .chip:hover{background:rgba(37,99,235,.10);}
+    .chip.active{background:var(--accent); border-color:var(--accent); color:white;}
+    .results-count{margin-top:12px; font-size:13px; color:var(--muted);}
+    .no-results{display:none; text-align:center; padding:30px 20px; color:var(--muted);}
+    .no-results.show{display:block;}
+
     @media(min-width:768px){.sticky-footer{display:none;}}
     @media(max-width:640px){
       h1{font-size:28px;}
       .card{padding:20px;}
       .post-cta{flex-direction:column;}
       header{position:relative;}
+      .blog-toolbar{position:static;}
     }
   </style>
 </head>
@@ -220,6 +259,18 @@
         Free articles to help you understand your situation clearly — before making any decisions.
         Knowledge is your best protection.
       </p>
+    </div>
+
+    <!-- SEARCH + CATEGORY TOOLBAR -->
+    <div class="blog-toolbar">
+      <div class="search-wrap">
+        <input type="text" id="blogSearch" placeholder="Search articles — e.g. &quot;foreclosure notice&quot;, &quot;probate&quot;, &quot;HELOC&quot;" aria-label="Search articles">
+      </div>
+      <div class="chip-row" id="chipRow" aria-label="Filter by topic"></div>
+      <div class="results-count" id="resultsCount"></div>
+    </div>
+    <div class="no-results" id="noResults">
+      No articles match that search. <a href="sms:+18082155828?body=HELP">Text or call Gift</a> and ask — she may already know the answer.
     </div>
 
     <!-- ============================================================
@@ -882,6 +933,73 @@
   </a>
 </div>
 
-<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+
+(function(){
+  var main = document.querySelector('main');
+  var articles = Array.prototype.slice.call(main.querySelectorAll(':scope > article.card'));
+  var searchInput = document.getElementById('blogSearch');
+  var chipRow = document.getElementById('chipRow');
+  var resultsCount = document.getElementById('resultsCount');
+  var noResults = document.getElementById('noResults');
+  var activeChip = null;
+
+  // Build each article's searchable text + category list once.
+  var data = articles.map(function(article){
+    var tags = Array.prototype.slice.call(article.querySelectorAll('.tag')).map(function(t){ return t.textContent.trim(); });
+    var title = article.querySelector('h2') ? article.querySelector('h2').textContent : '';
+    var teaser = article.querySelector('p') ? article.querySelector('p').textContent : '';
+    return {
+      el: article,
+      tags: tags,
+      text: (title + ' ' + teaser + ' ' + tags.join(' ')).toLowerCase()
+    };
+  });
+
+  // Count categories that appear more than once; those become quick-filter chips.
+  var counts = {};
+  data.forEach(function(d){ d.tags.forEach(function(t){ counts[t] = (counts[t] || 0) + 1; }); });
+  var topCategories = Object.keys(counts)
+    .filter(function(t){ return counts[t] >= 2; })
+    .sort(function(a, b){ return counts[b] - counts[a] || a.localeCompare(b); });
+
+  function makeChip(label, isAll){
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip' + (isAll ? ' active' : '');
+    chip.textContent = isAll ? 'All topics' : label;
+    chip.addEventListener('click', function(){
+      activeChip = isAll ? null : label;
+      Array.prototype.forEach.call(chipRow.children, function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      applyFilters();
+    });
+    return chip;
+  }
+
+  chipRow.appendChild(makeChip('All topics', true));
+  topCategories.forEach(function(t){ chipRow.appendChild(makeChip(t, false)); });
+
+  function applyFilters(){
+    var q = searchInput.value.trim().toLowerCase();
+    var shown = 0;
+    data.forEach(function(d){
+      var matchesSearch = !q || d.text.indexOf(q) !== -1;
+      var matchesChip = !activeChip || d.tags.indexOf(activeChip) !== -1;
+      var visible = matchesSearch && matchesChip;
+      d.el.style.display = visible ? '' : 'none';
+      if (visible) shown++;
+    });
+    resultsCount.textContent = shown === data.length
+      ? 'Showing all ' + data.length + ' articles'
+      : 'Showing ' + shown + ' of ' + data.length + ' articles';
+    noResults.classList.toggle('show', shown === 0);
+  }
+
+  searchInput.addEventListener('input', applyFilters);
+  applyFilters();
+})();
+</script>
 </body>
 </html>
